@@ -1,1357 +1,263 @@
 /* =========================================
-   OVC GLOBAL
+   OVC INSTALL PROMPT
 ========================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-
-    --bg: #08090d;
-    --bg-soft: #0e1016;
-    --card: rgba(255, 255, 255, 0.055);
-
-    --border: rgba(255, 255, 255, 0.1);
-
-    --text: #ffffff;
-    --muted: #9b9eaa;
-
-    --accent: #6c63ff;
-    --accent-light: #8c85ff;
-
-    --green: #36e39b;
-    --red: #ff5268;
-
-    --radius: 18px;
-
-    --transition: 0.25s ease;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-
-    min-height: 100vh;
-
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    color: var(--text);
-
-    background:
-
-        radial-gradient(
-            circle at 50% -10%,
-            rgba(108, 99, 255, 0.18),
-            transparent 40%
-        ),
-
-        var(--bg);
-
-    overflow-x: hidden;
-}
-
-
-/* =========================================
-   BUTTON RESET
-========================================= */
-
-button {
-    font: inherit;
-    border: none;
-    cursor: pointer;
-    color: inherit;
-}
-
-
-/* =========================================
-   NAVIGATION
-========================================= */
-
-nav {
+.install-prompt {
 
     position: fixed;
 
-    top: 0;
-    left: 0;
+    right: 25px;
 
-    width: 100%;
-    height: 70px;
+    bottom: 25px;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 30px;
-
-    background: rgba(8, 9, 13, 0.75);
-
-    backdrop-filter: blur(20px);
-
-    border-bottom: 1px solid var(--border);
-
-    z-index: 1000;
-}
-
-.logo {
-
-    font-size: 1.5rem;
-
-    font-weight: 900;
-
-    letter-spacing: 3px;
-
-    background:
-
-        linear-gradient(
-            135deg,
-            #ffffff,
-            var(--accent-light)
-        );
-
-    -webkit-background-clip: text;
-
-    -webkit-text-fill-color: transparent;
-}
-
-.navcontrols {
+    width: min(420px,
+            calc(100% - 40px));
 
     display: flex;
 
     align-items: center;
 
     gap: 15px;
-}
 
-.network-status {
+    padding: 18px;
 
-    display: flex;
+    background: rgba(20,
+            20,
+            30,
+            0.95);
 
-    align-items: center;
+    border: 1px solid rgba(255,
+            255,
+            255,
+            0.1);
 
-    gap: 7px;
-
-    color: var(--muted);
-
-    font-size: 0.8rem;
-}
-
-.status-dot {
-
-    width: 8px;
-    height: 8px;
-
-    display: inline-block;
-
-    border-radius: 50%;
-
-    background: var(--green);
+    border-radius: 18px;
 
     box-shadow:
-        0 0 10px var(--green);
-}
+        0 15px 50px rgba(0,
+            0,
+            0,
+            0.4);
 
-.nav-profile {
+    backdrop-filter:
+        blur(15px);
 
-    width: 42px;
-    height: 42px;
+    -webkit-backdrop-filter:
+        blur(15px);
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    transition: var(--transition);
-}
-
-.nav-profile:hover {
-
-    transform: scale(1.08);
-
-    background:
-        rgba(108, 99, 255, 0.2);
-}
-
-
-/* =========================================
-   LOGIN
-========================================= */
-
-.login {
-
-    min-height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 100px 20px 40px;
-}
-
-.login-main {
-
-    width: 100%;
-    max-width: 520px;
-
-    padding: 45px;
-
-    text-align: center;
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 28px;
-
-    backdrop-filter: blur(25px);
-
-    box-shadow:
-
-        0 30px 100px
-        rgba(0, 0, 0, 0.45);
-
-    animation:
-        fade-up 0.7s ease;
-}
-
-
-/* =========================================
-   LOGIN GIF
-========================================= */
-
-.login-gif-container {
-
-    width: 160px;
-    height: 130px;
-
-    margin: 0 auto 15px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-}
-
-.login-gif-container img {
-
-    max-width: 100%;
-    max-height: 100%;
-
-    object-fit: contain;
-
-    animation:
-        gif-fade 0.8s ease;
-}
-
-
-/* =========================================
-   LOGIN CONTENT
-========================================= */
-
-.login-content h1 {
-
-    font-size:
-        clamp(1.8rem, 5vw, 2.5rem);
-
-    margin-bottom: 8px;
-}
-
-.login-content p {
-
-    color: var(--muted);
-
-    margin-bottom: 20px;
-}
-
-.bot-message {
-
-    display: inline-block;
-
-    padding: 10px 15px;
-
-    margin-bottom: 25px;
-
-    border-radius: 12px;
-
-    background:
-        rgba(108, 99, 255, 0.1);
-
-    border:
-        1px solid
-        rgba(108, 99, 255, 0.2);
-
-    color: #c9c6ff;
-
-    font-size: 0.9rem;
-}
-
-
-/* =========================================
-   INPUT
-========================================= */
-
-.input {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 20px;
-
-    text-align: left;
-}
-
-.input-username,
-.input-gender {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-}
-
-.input label {
-
-    color: var(--muted);
-
-    font-size: 0.85rem;
-
-    font-weight: 600;
-}
-
-.inputbox {
-
-    display: flex;
-
-    gap: 10px;
-}
-
-.inputbox input,
-.input-gender select {
-
-    height: 52px;
-
-    width: 100%;
-
-    padding: 0 15px;
-
-    color: white;
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 12px;
-
-    outline: none;
-
-    transition: var(--transition);
-}
-
-.inputbox input:focus,
-.input-gender select:focus {
-
-    border-color: var(--accent);
-
-    box-shadow:
-        0 0 0 4px
-        rgba(108, 99, 255, 0.12);
-}
-
-.input-gender select {
-
-    cursor: pointer;
-}
-
-.input-gender option {
-
-    background: #11131a;
-}
-
-#send {
-
-    width: 52px;
-    min-width: 52px;
-
-    border-radius: 12px;
-
-    background: var(--accent);
-
-    font-size: 1.2rem;
-
-    transition: var(--transition);
-}
-
-#send:hover {
-
-    background: var(--accent-light);
+    z-index: 9999;
 
     transform:
-        translateY(-2px);
+        translateY(150px);
 
-    box-shadow:
-        0 10px 30px
-        rgba(108, 99, 255, 0.3);
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.5s ease,
+        visibility 0.5s;
+
 }
 
 
-/* =========================================
-   LOGIN FOOTER
-========================================= */
+/* SHOW INSTALL PROMPT */
 
-.login-footer {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    margin-top: 25px;
-
-    color: var(--muted);
-
-    font-size: 0.75rem;
-}
-
-
-/* =========================================
-   DASHBOARD
-========================================= */
-
-.dashboard {
-
-    display: none;
-
-    max-width: 1100px;
-
-    margin: 0 auto;
-
-    padding:
-
-        110px
-
-        25px
-
-        100px;
-}
-
-.dashboard-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 30px;
-}
-
-.welcome-small {
-
-    color: var(--muted);
-
-    font-size: 0.85rem;
-
-    margin-bottom: 5px;
-}
-
-.dashboard-header h1 {
-
-    font-size:
-        clamp(1.7rem, 4vw, 2.3rem);
-}
-
-.dashboard-actions {
-
-    display: flex;
-
-    gap: 10px;
-}
-
-.icon-button {
-
-    width: 45px;
-    height: 45px;
-
-    border-radius: 12px;
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    transition: var(--transition);
-}
-
-.icon-button:hover {
-
-    background:
-        rgba(108, 99, 255, 0.15);
+.install-prompt.show {
 
     transform:
-        translateY(-2px);
+        translateY(0);
+
+    opacity: 1;
+
+    visibility: visible;
+
 }
 
 
-/* =========================================
-   NETWORK CARD
-========================================= */
+/* INSTALL ICON */
 
-.network-card {
+.install-icon {
 
-    display: flex;
+    min-width: 50px;
 
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 20px;
-
-    margin-bottom: 20px;
-
-    border-radius: var(--radius);
-
-    background:
-
-        linear-gradient(
-            135deg,
-            rgba(108, 99, 255, 0.15),
-            rgba(255, 255, 255, 0.03)
-        );
-
-    border: 1px solid var(--border);
-}
-
-.network-card-icon {
-
-    font-size: 2rem;
-}
-
-.network-card-info {
-
-    flex: 1;
-}
-
-.network-card-info h3 {
-
-    margin-bottom: 5px;
-}
-
-.network-card-info p {
-
-    color: var(--muted);
-
-    font-size: 0.8rem;
-}
-
-.network-refresh {
-
-    background: transparent;
-
-    font-size: 1.2rem;
-}
-
-
-/* =========================================
-   QUICK ACTIONS
-========================================= */
-
-.quick-actions {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-bottom: 40px;
-}
-
-.quick-action {
-
-    padding: 22px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 5px;
-
-    text-align: left;
-
-    border-radius: var(--radius);
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    transition: var(--transition);
-}
-
-.quick-action span {
-
-    font-size: 1.7rem;
-
-    margin-bottom: 5px;
-}
-
-.quick-action small {
-
-    color: var(--muted);
-}
-
-.quick-action:hover {
-
-    transform:
-        translateY(-4px);
-
-    border-color:
-        rgba(108, 99, 255, 0.5);
-
-    background:
-        rgba(108, 99, 255, 0.08);
-}
-
-
-/* =========================================
-   NEARBY USERS
-========================================= */
-
-.section-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 20px;
-}
-
-.section-header h2 {
-
-    font-size: 1.25rem;
-
-    margin-bottom: 5px;
-}
-
-.section-header p {
-
-    color: var(--muted);
-
-    font-size: 0.8rem;
-}
-
-.refresh-users {
-
-    background: transparent;
-
-    font-size: 1.2rem;
-}
-
-
-.users-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 12px;
-}
-
-.user-card {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 15px;
-
-    border-radius: var(--radius);
-
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    transition: var(--transition);
-}
-
-.user-card:hover {
-
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    transform:
-        translateX(3px);
-}
-
-.user-avatar {
-
-    width: 50px;
     height: 50px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    font-size: 1.6rem;
-
-    border-radius: 15px;
+    font-size: 28px;
 
     background:
-        rgba(108, 99, 255, 0.1);
+        rgba(255,
+            255,
+            255,
+            0.08);
+
+    border-radius: 14px;
+
 }
 
-.user-info {
+
+/* INSTALL CONTENT */
+
+.install-content {
 
     flex: 1;
-}
 
-.user-info h3 {
-
-    font-size: 0.95rem;
-
-    margin-bottom: 4px;
-}
-
-.user-info p {
-
-    color: var(--muted);
-
-    font-size: 0.75rem;
-}
-
-.user-actions {
-
-    display: flex;
-
-    gap: 8px;
-}
-
-.call-button,
-.message-button {
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 12px;
-
-    background:
-        rgba(255, 255, 255, 0.06);
-
-    transition: var(--transition);
-}
-
-.call-button:hover {
-
-    background:
-        rgba(54, 227, 155, 0.15);
-}
-
-.message-button:hover {
-
-    background:
-        rgba(108, 99, 255, 0.15);
 }
 
 
-/* =========================================
-   FUNNY MESSAGE
-========================================= */
+.install-content h3 {
 
-.funny-message {
+    margin: 0 0 4px;
 
-    position: fixed;
+    font-size: 16px;
 
-    right: 25px;
-    bottom: 25px;
-
-    max-width: 340px;
-
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 12px;
-
-    padding: 15px;
-
-    background:
-        rgba(20, 21, 29, 0.95);
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 16px;
-
-    box-shadow:
-        0 15px 50px
-        rgba(0, 0, 0, 0.4);
-
-    backdrop-filter: blur(15px);
-
-    z-index: 900;
-
-    animation:
-        message-slide 0.5s ease;
 }
 
-.funny-message-icon {
 
-    font-size: 1.5rem;
-}
+.install-content p {
 
-.funny-message strong {
+    margin: 0;
 
-    font-size: 0.8rem;
-}
+    font-size: 13px;
 
-.funny-message p {
-
-    margin-top: 3px;
-
-    color: var(--muted);
-
-    font-size: 0.8rem;
+    opacity: 0.7;
 
     line-height: 1.4;
-}
 
-#close-message {
-
-    background: transparent;
-
-    color: var(--muted);
-
-    font-size: 1.2rem;
 }
 
 
-/* =========================================
-   VIDEO CALL
-========================================= */
+/* INSTALL BUTTON */
 
-#video-layout {
+.install-button {
 
-    display: none;
+    border: none;
 
-    position: fixed;
+    padding: 10px 16px;
 
-    inset: 0;
-
-    z-index: 2000;
-
-    background: #000;
-}
-
-.call-header {
-
-    position: absolute;
-
-    top: 20px;
-    left: 20px;
-    right: 20px;
-
-    z-index: 10;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    color: white;
-}
-
-.call-status-dot {
-
-    width: 8px;
-    height: 8px;
-
-    display: inline-block;
-
-    margin-right: 6px;
-
-    border-radius: 50%;
-
-    background: var(--green);
-}
-
-.videolayoutgrid {
-
-    width: 100%;
-    height: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 260px;
-
-    gap: 15px;
-
-    padding: 20px;
-}
-
-.video-container {
-
-    position: relative;
-
-    overflow: hidden;
-
-    border-radius: 18px;
-
-    background: #111;
-}
-
-.video-container video {
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-.local-video {
-
-    position: absolute;
-
-    right: 30px;
-    bottom: 110px;
-
-    width: 220px;
-    height: 140px;
-
-    z-index: 5;
-
-    border:
-        2px solid
-        rgba(255, 255, 255, 0.3);
-}
-
-.video-user-name {
-
-    position: absolute;
-
-    left: 15px;
-    bottom: 15px;
-
-    padding: 5px 10px;
-
-    border-radius: 8px;
+    border-radius: 10px;
 
     background:
-        rgba(0, 0, 0, 0.5);
+        white;
 
-    font-size: 0.75rem;
+    color:
+        black;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease;
+
 }
 
-.controls {
 
-    position: absolute;
-
-    bottom: 20px;
-
-    left: 50%;
+.install-button:hover {
 
     transform:
-        translateX(-50%);
+        scale(1.05);
 
-    display: flex;
-
-    gap: 12px;
-
-    z-index: 10;
 }
 
-.call-control {
 
-    width: 52px;
-    height: 52px;
+/* CLOSE BUTTON */
 
-    border-radius: 50%;
+.close-install {
+
+    position: absolute;
+
+    right: 8px;
+
+    top: 8px;
+
+    width: 24px;
+
+    height: 24px;
+
+    border: none;
 
     background:
-        rgba(255, 255, 255, 0.1);
+        transparent;
 
-    backdrop-filter: blur(10px);
+    color:
+        white;
 
-    transition: var(--transition);
-}
+    opacity: 0.5;
 
-.call-control:hover {
+    cursor: pointer;
 
-    background:
-        rgba(255, 255, 255, 0.2);
-}
-
-.end-call {
-
-    background: var(--red);
 }
 
 
-/* =========================================
-   MOBILE NAV
-========================================= */
-
-.mobile-navigation {
-
-    display: none;
-}
-
-
-/* =========================================
-   TOAST
-========================================= */
-
-.toast {
-
-    position: fixed;
-
-    top: 90px;
-    left: 50%;
-
-    transform:
-        translateX(-50%)
-        translateY(-20px);
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 12px 18px;
-
-    border-radius: 12px;
-
-    background:
-        rgba(20, 21, 29, 0.95);
-
-    border:
-        1px solid var(--border);
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition: var(--transition);
-
-    z-index: 3000;
-}
-
-.toast.show {
+.close-install:hover {
 
     opacity: 1;
 
-    transform:
-        translateX(-50%)
-        translateY(0);
 }
 
 
 /* =========================================
-   ANIMATIONS
-========================================= */
-
-@keyframes fade-up {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(25px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
-    }
-
-}
-
-@keyframes gif-fade {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            scale(0.9);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            scale(1);
-
-    }
-
-}
-
-@keyframes message-slide {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(20px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
-    }
-
-}
-
-
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width: 800px) {
-
-    .network-status {
-
-        display: none;
-    }
-
-    .quick-actions {
-
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-    .videolayoutgrid {
-
-        grid-template-columns: 1fr;
-    }
-
-}
-
-
-/* =========================================
-   MOBILE
+   MOBILE INSTALL PROMPT
 ========================================= */
 
 @media (max-width: 600px) {
 
-    nav {
+    .install-prompt {
 
-        height: 60px;
-
-        padding:
-            0 16px;
-    }
-
-    .logo {
-
-        font-size: 1.25rem;
-    }
-
-    .login {
-
-        padding:
-            80px 15px 30px;
-    }
-
-    .login-main {
-
-        padding:
-            30px 20px;
-
-        border-radius: 22px;
-    }
-
-    .login-gif-container {
-
-        width: 130px;
-        height: 110px;
-    }
-
-    .login-content h1 {
-
-        font-size: 1.7rem;
-    }
-
-    .login-footer {
-
-        flex-direction: column;
-    }
-
-    .dashboard {
-
-        padding:
-            85px 16px 100px;
-    }
-
-    .quick-actions {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .quick-action {
-
-        flex-direction: row;
-
-        align-items: center;
-
-        padding: 15px;
-    }
-
-    .quick-action span {
-
-        margin: 0;
-
-        font-size: 1.4rem;
-    }
-
-    .quick-action small {
-
-        margin-left: auto;
-    }
-
-    .section-header {
-
-        align-items: flex-start;
-    }
-
-    .user-card {
-
-        padding: 12px;
-    }
-
-    .funny-message {
-
-        right: 15px;
         left: 15px;
 
-        bottom: 80px;
-
-        max-width: none;
-    }
-
-    .local-video {
-
         right: 15px;
-        bottom: 100px;
 
-        width: 130px;
-        height: 100px;
+        bottom: 15px;
+
+        width: auto;
+
+        padding: 15px;
+
     }
 
-    .videolayoutgrid {
 
-        padding: 10px;
+    .install-icon {
+
+        min-width: 42px;
+
+        height: 42px;
+
+        font-size: 22px;
+
     }
 
-    .controls {
 
-        bottom: 20px;
+    .install-content h3 {
+
+        font-size: 14px;
+
     }
 
-    .mobile-navigation {
 
-        position: fixed;
+    .install-content p {
 
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
+        font-size: 12px;
 
-        height: 65px;
-
-        display: flex;
-
-        justify-content:
-            space-around;
-
-        align-items: center;
-
-        background:
-            rgba(20, 21, 29, 0.95);
-
-        border:
-            1px solid var(--border);
-
-        border-radius: 18px;
-
-        backdrop-filter:
-            blur(20px);
-
-        z-index: 1000;
     }
 
-    .mobile-navigation button {
 
-        display: flex;
+    .install-button {
 
-        flex-direction: column;
+        padding:
+            9px 12px;
 
-        align-items: center;
+        font-size:
+            12px;
 
-        gap: 3px;
-
-        background: transparent;
-
-        color: var(--muted);
-
-        font-size: 1.1rem;
-    }
-
-    .mobile-navigation button span {
-
-        font-size: 0.65rem;
-    }
-
-    .mobile-navigation button.active {
-
-        color: white;
     }
 
 }

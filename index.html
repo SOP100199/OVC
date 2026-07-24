@@ -1,624 +1,130 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+    <meta name="theme-color" content="#08090d" />
 
-    <meta
-        name="description"
-        content="OVC - Offline Video Communication"
-    >
+    <meta name="description" content="OVC - Offline Video Calling" />
 
-    <meta name="theme-color" content="#08090d">
+    <title>OVC - Offline Video Calling</title>
 
-    <title>OVC — Offline Video Communication</title>
+    <!-- PWA Manifest -->
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json" />
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
+    <!-- App Icon -->
 
-    <!-- Optional favicon -->
-    <link
-        rel="icon"
-        href="assets/icons/favicon.png"
-        type="image/png"
-    >
-</head>
+    <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
 
-<body>
+    <!-- CSS -->
 
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
     <!-- =====================================
-         TOP NAVIGATION
+         NAVIGATION
     ====================================== -->
 
     <nav>
+      <div class="logo">OVC</div>
 
-        <div class="logo">
-            OVC
-        </div>
-
-        <div class="navcontrols">
-
-            <div class="network-status">
-                <span class="status-dot"></span>
-                <span class="status-text">Offline Network</span>
-            </div>
-
-            <button
-                class="nav-profile"
-                id="profile-button"
-                aria-label="Open profile"
-            >
-                👤
-            </button>
-
-        </div>
-
+      <div class="navcontrols">
+        <div class="nav-profile">👤</div>
+      </div>
     </nav>
 
-
     <!-- =====================================
-         LOGIN / ONBOARDING
+         LOGIN
     ====================================== -->
 
-    <main class="login">
-
-        <div class="login-main">
-
-            <!-- Personality GIF -->
-
-            <div class="login-gif-container">
-
-                <img
-                    id="login-gif"
-                    src="assets/gifs/welcome.gif"
-                    alt="OVC animation"
-                >
-
-            </div>
-
-
-            <!-- OVC Title -->
-
-            <div class="login-content">
-
-                <h1>
-                    Welcome to OVC 👋
-                </h1>
-
-                <p>
-                    Offline Video Communication
-                </p>
-
-                <div
-                    class="bot-message"
-                    id="bot-message"
-                >
-                    Hey! 👋 Welcome to OVC!
-                </div>
-
-            </div>
-
-
-            <!-- Login Form -->
-
-            <div class="input">
-
-                <div class="input-username">
-
-                    <label for="username">
-                        What should we call you? 😄
-                    </label>
-
-                    <div class="inputbox">
-
-                        <input
-                            type="text"
-                            required
-                            name="username"
-                            id="username"
-                            placeholder="Enter your name"
-                            maxlength="30"
-                            autocomplete="off"
-                        >
-
-                        <button
-                            id="send"
-                            type="button"
-                            aria-label="Continue"
-                        >
-                            👉
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!--
-                Keep gender for now if you want
-                to use profile avatars.
-
-                You can remove this later.
-                -->
-
-                <div class="input-gender">
-
-                    <label for="gender">
-                        Choose your avatar style 👤
-                    </label>
-
-                    <select
-                        name="gender"
-                        id="gender"
-                    >
-
-                        <option value="male">
-                            🧑 Male
-                        </option>
-
-                        <option value="female">
-                            👩 Female
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <div class="login-footer">
-
-                <span>
-                    No account.
-                </span>
-
-                <span>
-                    No password.
-                </span>
-
-                <span>
-                    No Internet required. 😎
-                </span>
-
-            </div>
-
+    <div class="login">
+      <div class="login-main">
+        <div class="login-gif-container">
+          <img
+            id="login-gif"
+            src="assets/gifs/welcome.gif"
+            alt="OVC Animation"
+          />
         </div>
 
-    </main>
+        <h1>OVC</h1>
 
+        <p>Offline Video Calling</p>
 
+        <div id="bot-message" class="bot-message">Hey! 👋</div>
 
-    <!-- =====================================
-         MAIN OVC DASHBOARD
-    ====================================== -->
+        <div class="input">
+          <div class="input-username">
+            <label for="username"> Username </label>
 
-    <main
-        class="dashboard"
-        id="dashboard"
-    >
+            <div class="inputbox">
+              <input
+                type="text"
+                required
+                name="username"
+                id="username"
+                placeholder="Enter your username"
+              />
 
-        <section class="dashboard-header">
-
-            <div>
-
-                <p class="welcome-small">
-                    Welcome back 👋
-                </p>
-
-                <h1>
-                    Hey, <span id="profile-name">Sop</span>!
-                </h1>
-
+              <button id="send" type="button">👉</button>
             </div>
+          </div>
 
-            <div class="dashboard-actions">
+          <div class="input-gender">
+            <label for="gender"> Gender </label>
 
-                <button
-                    class="icon-button"
-                    id="my-qr"
-                    title="My QR"
-                >
-                    🔳
-                </button>
+            <select name="gender" id="gender">
+              <option value="male">Male</option>
 
-                <button
-                    class="icon-button"
-                    id="settings-button"
-                    title="Settings"
-                >
-                    ⚙️
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             NETWORK STATUS CARD
-        ====================================== -->
-
-        <section class="network-card">
-
-            <div class="network-card-icon">
-                📡
-            </div>
-
-            <div class="network-card-info">
-
-                <h3>
-                    OVC Network
-                </h3>
-
-                <p>
-                    <span class="status-dot"></span>
-                    Connected to local network
-                </p>
-
-            </div>
-
-            <button
-                class="network-refresh"
-                id="refresh-network"
-            >
-                🔄
-            </button>
-
-        </section>
-
-
-        <!-- =====================================
-             QUICK ACTIONS
-        ====================================== -->
-
-        <section class="quick-actions">
-
-            <button
-                class="quick-action"
-                id="scan-qr"
-            >
-
-                <span>
-                    🔳
-                </span>
-
-                <strong>
-                    Scan QR
-                </strong>
-
-                <small>
-                    Quick connect
-                </small>
-
-            </button>
-
-
-            <button
-                class="quick-action"
-                id="my-qr-action"
-            >
-
-                <span>
-                    👤
-                </span>
-
-                <strong>
-                    My QR
-                </strong>
-
-                <small>
-                    Share identity
-                </small>
-
-            </button>
-
-
-            <button
-                class="quick-action"
-                id="call-history"
-            >
-
-                <span>
-                    📞
-                </span>
-
-                <strong>
-                    Calls
-                </strong>
-
-                <small>
-                    Call history
-                </small>
-
-            </button>
-
-        </section>
-
-
-        <!-- =====================================
-             NEARBY USERS
-        ====================================== -->
-
-        <section class="nearby-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <h2>
-                        People Nearby 👀
-                    </h2>
-
-                    <p>
-                        Users available on your OVC network
-                    </p>
-
-                </div>
-
-                <button
-                    id="refresh-users"
-                    class="refresh-users"
-                >
-                    🔄
-                </button>
-
-            </div>
-
-
-            <div
-                class="users-list"
-                id="users-list"
-            >
-
-                <!-- Example user -->
-
-                <div class="user-card">
-
-                    <div class="user-avatar">
-                        🥷
-                    </div>
-
-                    <div class="user-info">
-
-                        <h3>
-                            Rahul
-                        </h3>
-
-                        <p>
-                            <span class="status-dot"></span>
-                            Available
-                        </p>
-
-                    </div>
-
-                    <div class="user-actions">
-
-                        <button
-                            class="call-button"
-                            title="Video Call"
-                        >
-                            📹
-                        </button>
-
-                        <button
-                            class="message-button"
-                            title="Message"
-                        >
-                            💬
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-
-    <!-- =====================================
-         FUNNY OVC MESSAGE
-    ====================================== -->
-
-    <div
-        class="funny-message"
-        id="funny-message"
-    >
-
-        <div class="funny-message-icon">
-            🤖
+              <option value="female">Female</option>
+            </select>
+          </div>
         </div>
-
-        <div>
-
-            <strong>
-                OVC says:
-            </strong>
-
-            <p id="funny-message-text">
-                Nobody is online... suspicious. 👀
-            </p>
-
-        </div>
-
-        <button
-            id="close-message"
-            aria-label="Close message"
-        >
-            ×
-        </button>
-
+      </div>
     </div>
 
-
-
     <!-- =====================================
-         VIDEO CALL LAYOUT
+         INSTALL OVC APP PROMPT
     ====================================== -->
 
-    <div
-        id="video-layout"
-        class="video-layout"
-    >
+    <div id="install-prompt" class="install-prompt">
+      <div class="install-icon">📱</div>
 
-        <div class="call-header">
+      <div class="install-content">
+        <h3>Install OVC</h3>
 
-            <div>
+        <p>Install OVC on your device for a faster app-like experience.</p>
+      </div>
 
-                <span class="call-status-dot"></span>
+      <button id="install-button" class="install-button">Install</button>
 
-                <span id="call-status">
-                    Connected
-                </span>
-
-            </div>
-
-            <div id="call-timer">
-                00:00
-            </div>
-
-        </div>
-
-
-        <div class="videolayoutgrid">
-
-            <!-- Remote Video -->
-
-            <div class="video-container remote-video">
-
-                <video
-                    id="remote-video"
-                    autoplay
-                    playsinline
-                ></video>
-
-                <div class="video-user-name">
-                    Rahul
-                </div>
-
-            </div>
-
-
-            <!-- Local Video -->
-
-            <div class="video-container local-video">
-
-                <video
-                    id="local-video"
-                    autoplay
-                    muted
-                    playsinline
-                ></video>
-
-                <div class="video-user-name">
-                    You
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Call Controls -->
-
-        <div class="controls">
-
-            <button
-                id="mute-button"
-                class="call-control"
-            >
-                🎙️
-            </button>
-
-            <button
-                id="camera-button"
-                class="call-control"
-            >
-                📹
-            </button>
-
-            <button
-                id="speaker-button"
-                class="call-control"
-            >
-                🔊
-            </button>
-
-            <button
-                id="end-call"
-                class="call-control end-call"
-            >
-                📞
-            </button>
-
-        </div>
-
+      <button
+        id="close-install"
+        class="close-install"
+        aria-label="Close install prompt"
+      >
+        ✕
+      </button>
     </div>
-
-
 
     <!-- =====================================
-         MOBILE NAVIGATION
+         TOAST
     ====================================== -->
 
-    <div class="mobile-navigation">
+    <div id="toast" class="toast">
+      <span id="toast-icon"> ℹ️ </span>
 
-        <button class="active">
-            👥
-            <span>People</span>
-        </button>
-
-        <button id="mobile-scan">
-            🔳
-            <span>Scan</span>
-        </button>
-
-        <button id="mobile-calls">
-            📞
-            <span>Calls</span>
-        </button>
-
-        <button id="mobile-settings">
-            ⚙️
-            <span>Settings</span>
-        </button>
-
+      <span id="toast-message"> Welcome to OVC </span>
     </div>
-
-
 
     <!-- =====================================
-         TOAST NOTIFICATION
+         JAVASCRIPT
     ====================================== -->
-
-    <div
-        class="toast"
-        id="toast"
-    >
-        <span id="toast-icon">
-            ℹ️
-        </span>
-
-        <span id="toast-message">
-            OVC notification
-        </span>
-
-    </div>
-
 
     <script src="script.js"></script>
-
-</body>
-
+  </body>
 </html>
