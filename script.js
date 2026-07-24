@@ -1,40 +1,75 @@
 /* =========================================================
    OVC v0.1
-   Offline Video Calling
-   Complete JavaScript
+   OFFLINE VIDEO CALLING
 ========================================================= */
 
 
 /* =========================================================
-   ELEMENTS
+   DOM ELEMENTS
 ========================================================= */
 
-const nameInput = document.getElementById("username");
-const genderInput = document.getElementById("gender");
-const sendButton = document.getElementById("send");
+const login =
+    document.getElementById("login");
 
-const loginSection =
-    document.querySelector(".login");
+const usernameInput =
+    document.getElementById("username");
+
+const genderInput =
+    document.getElementById("gender");
+
+const sendButton =
+    document.getElementById("send");
+
+const loginGif =
+    document.getElementById("login-gif");
+
+const botMessage =
+    document.getElementById("bot-message");
 
 const videoLayout =
-    document.getElementById("video-layout");
+    document.getElementById("videolayout");
 
-const videoLayoutGrid =
-    document.querySelector(
-        ".videolayoutgrid"
-    );
+const welcomeUser =
+    document.getElementById("welcome-user");
 
-const profileButton =
-    document.querySelector(
-        ".nav-profile"
-    );
+const userAvatar =
+    document.getElementById("user-avatar");
+
+const statusGif =
+    document.getElementById("status-gif");
+
+const statusTitle =
+    document.getElementById("status-title");
+
+const statusText =
+    document.getElementById("status-text");
+
+const findUsersButton =
+    document.getElementById("find-users");
+
+const statusButton =
+    document.getElementById("status-button");
+
+const logoutButton =
+    document.getElementById("logout-button");
+
+const toast =
+    document.getElementById("toast");
+
+const toastIcon =
+    document.getElementById("toast-icon");
+
+const toastMessage =
+    document.getElementById("toast-message");
+
 
 
 /* =========================================================
-   OVC PROFILE EMOJIS
+   USER AVATARS
 ========================================================= */
 
 const user_profile_boy_images = [
+
     "🧑‍🎄",
     "🕵️‍♂️",
     "💂‍♂️",
@@ -42,10 +77,12 @@ const user_profile_boy_images = [
     "👨‍🎓",
     "🧑‍🚀",
     "🧙‍♂️"
+
 ];
 
 
 const user_profile_girl_images = [
+
     "👩‍🎄",
     "🕵️‍♀️",
     "💂‍♀️",
@@ -53,362 +90,90 @@ const user_profile_girl_images = [
     "👩‍🎓",
     "🧑‍🚀",
     "🧙‍♀️"
+
 ];
 
 
+
 /* =========================================================
-   OVC GIF COLLECTION
+   GIF PATHS
 ========================================================= */
 
-const gifs = [
+const gifs = {
 
-    "assets/gifs/calling.gif",
+    welcome:
+        "assets/gifs/welcome.gif",
 
-    "assets/gifs/celebrating.gif",
+    thinking:
+        "assets/gifs/thinking.gif",
 
-    "assets/gifs/confused.gif",
+    calling:
+        "assets/gifs/calling.gif",
 
-    "assets/gifs/connectionlost.gif",
+    talking:
+        "assets/gifs/talking.gif",
 
-    "assets/gifs/dancing.gif",
+    connectionlost:
+        "assets/gifs/connectionlost.gif",
 
-    "assets/gifs/excited.gif",
+    success:
+        "assets/gifs/success.gif",
 
-    "assets/gifs/goodbye.gif",
+    goodbye:
+        "assets/gifs/goodbye.gif",
 
-    "assets/gifs/laughing.gif",
+    confused:
+        "assets/gifs/confused.gif",
 
-    "assets/gifs/shocked.gif",
+    dancing:
+        "assets/gifs/dancing.gif",
 
-    "assets/gifs/success.gif",
+    celebrating:
+        "assets/gifs/celebrating.gif",
 
-    "assets/gifs/talking.gif",
+    excited:
+        "assets/gifs/excited.gif",
 
-    "assets/gifs/thinking.gif",
+    laughing:
+        "assets/gifs/laughing.gif",
 
-    "assets/gifs/welcome.gif"
+    shocked:
+        "assets/gifs/shocked.gif"
 
-];
+};
+
 
 
 /* =========================================================
-   OVC BOT MESSAGES
+   BOT MESSAGES
 ========================================================= */
 
 const messages = [
 
     "Hey! 👋",
 
-    "Welcome to OVC! 😎",
+    "Welcome to OVC!",
 
     "I'm your OVC guide 🤖",
 
-    "We communicate without the Internet! 📡",
+    "No Internet? No problem! 😎",
 
-    "No Wi-Fi? No problem! 😂",
+    "Let's find someone nearby 📡",
 
-    "The Internet can take a break. OVC won't. 😎",
+    "Your local network is your highway 🚀",
 
-    "First, tell me your name! 👀",
-
-    "Don't worry, I won't judge your username. 😂",
-
-    "Ready to meet people nearby? 👋",
-
-    "Let's get you connected! 🚀",
-
-    "OVC is waking up... ☕",
-
-    "Searching for absolutely nothing... just kidding! 😂",
-
-    "Your local network is your new Internet. 🌐",
-
-    "Welcome aboard! 🚀"
+    "Ready to communicate? 📹"
 
 ];
 
 
+
 /* =========================================================
-   OVC USER DATA
+   APPLICATION STATE
 ========================================================= */
 
 let currentUser = null;
 
-
-/* =========================================================
-   PWA INSTALL
-========================================================= */
-
-let deferredInstallPrompt = null;
-
-
-/* =========================================================
-   HELPER
-========================================================= */
-
-function getRandomItem(array) {
-
-    return array[
-        Math.floor(
-            Math.random() *
-            array.length
-        )
-    ];
-
-}
-
-
-/* =========================================================
-   GET RANDOM USER AVATAR
-========================================================= */
-
-function getUserAvatar(gender) {
-
-    if (
-        gender === "female"
-    ) {
-
-        return getRandomItem(
-            user_profile_girl_images
-        );
-
-    }
-
-
-    return getRandomItem(
-        user_profile_boy_images
-    );
-
-}
-
-
-/* =========================================================
-   CREATE BOT MESSAGE
-========================================================= */
-
-function createBotMessage() {
-
-    const oldMessage =
-        document.querySelector(
-            ".bot-message"
-        );
-
-
-    if (
-        !oldMessage
-    ) {
-
-        return;
-
-    }
-
-
-    oldMessage.textContent =
-        getRandomItem(
-            messages
-        );
-
-}
-
-
-/* =========================================================
-   CREATE LOGIN GIF
-========================================================= */
-
-function createLoginGif() {
-
-    if (
-        document.querySelector(
-            ".login-gif-container"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        !loginSection
-    ) {
-
-        return;
-
-    }
-
-
-    const loginMain =
-        loginSection.querySelector(
-            ".login-main"
-        );
-
-
-    if (
-        !loginMain
-    ) {
-
-        return;
-
-    }
-
-
-    const container =
-        document.createElement(
-            "div"
-        );
-
-
-    container.className =
-        "login-gif-container";
-
-
-    const image =
-        document.createElement(
-            "img"
-        );
-
-
-    image.className =
-        "status-gif";
-
-
-    image.alt =
-        "OVC Status";
-
-
-    image.src =
-        getRandomItem(
-            gifs
-        );
-
-
-    container.appendChild(
-        image
-    );
-
-
-    loginMain.insertBefore(
-        container,
-        loginMain.firstChild
-    );
-
-
-    setTimeout(
-        () => {
-
-            image.classList.add(
-                "show"
-            );
-
-        },
-        100
-    );
-
-}
-
-
-/* =========================================================
-   SHOW GIF
-========================================================= */
-
-function showRandomGif() {
-
-    const existingGif =
-        document.querySelector(
-            ".login-gif-container img"
-        );
-
-
-    if (
-        !existingGif
-    ) {
-
-        return;
-
-    }
-
-
-    existingGif.classList.remove(
-        "show"
-    );
-
-
-    setTimeout(
-        () => {
-
-            existingGif.src =
-                getRandomItem(
-                    gifs
-                );
-
-
-            existingGif.classList.add(
-                "show"
-            );
-
-        },
-        500
-    );
-
-}
-
-
-/* =========================================================
-   SHOW STATUS MESSAGE
-========================================================= */
-
-function showStatusMessage(
-    message
-) {
-
-    let statusMessage =
-        document.querySelector(
-            ".status-message"
-        );
-
-
-    if (
-        !statusMessage
-    ) {
-
-        statusMessage =
-            document.createElement(
-                "div"
-            );
-
-
-        statusMessage.className =
-            "status-message";
-
-
-        document.body.appendChild(
-            statusMessage
-        );
-
-    }
-
-
-    statusMessage.textContent =
-        message;
-
-
-    statusMessage.classList.add(
-        "show"
-    );
-
-
-    setTimeout(
-        () => {
-
-            statusMessage.classList.remove(
-                "show"
-            );
-
-        },
-        3500
-    );
-
-}
 
 
 /* =========================================================
@@ -416,39 +181,15 @@ function showStatusMessage(
 ========================================================= */
 
 function showToast(
-    message
+    message,
+    icon = "ℹ️"
 ) {
 
-    let toast =
-        document.querySelector(
-            ".toast"
-        );
+    toastIcon.textContent =
+        icon;
 
-
-    if (
-        !toast
-    ) {
-
-        toast =
-            document.createElement(
-                "div"
-            );
-
-
-        toast.className =
-            "toast";
-
-
-        document.body.appendChild(
-            toast
-        );
-
-    }
-
-
-    toast.textContent =
+    toastMessage.textContent =
         message;
-
 
     toast.classList.add(
         "show"
@@ -469,165 +210,107 @@ function showToast(
 }
 
 
+
 /* =========================================================
-   SAVE USER
+   CHANGE STATUS GIF
 ========================================================= */
 
-function saveUser(
-    user
+function setStatus(
+    gifName,
+    title,
+    text
 ) {
 
-    localStorage.setItem(
-        "ovc_user",
-        JSON.stringify(
-            user
-        )
+    statusGif.style.opacity =
+        "0";
+
+
+    setTimeout(
+        () => {
+
+            statusGif.src =
+                gifs[gifName];
+
+
+            statusGif.onload =
+                () => {
+
+                    statusGif.style.opacity =
+                        "1";
+
+                };
+
+
+            statusTitle.textContent =
+                title;
+
+
+            statusText.textContent =
+                text;
+
+        },
+        300
     );
 
 }
 
 
-/* =========================================================
-   LOAD USER
-========================================================= */
-
-function loadUser() {
-
-    const savedUser =
-        localStorage.getItem(
-            "ovc_user"
-        );
-
-
-    if (
-        !savedUser
-    ) {
-
-        return null;
-
-    }
-
-
-    try {
-
-        return JSON.parse(
-            savedUser
-        );
-
-    }
-
-    catch (
-        error
-    ) {
-
-        console.error(
-            "OVC: Failed to load user",
-            error
-        );
-
-
-        localStorage.removeItem(
-            "ovc_user"
-        );
-
-
-        return null;
-
-    }
-
-}
-
 
 /* =========================================================
-   UPDATE PROFILE
+   BOT MESSAGE
 ========================================================= */
 
-function updateProfile(
-    user
+function showBotMessage(
+    message
 ) {
 
-    if (
-        !profileButton
-    ) {
-
-        return;
-
-    }
-
-
-    profileButton.textContent =
-        user.avatar;
-
-
-    profileButton.title =
-        user.name;
+    botMessage.textContent =
+        message;
 
 }
+
 
 
 /* =========================================================
-   CREATE OVC MAIN SCREEN
+   GENERATE USER AVATAR
 ========================================================= */
 
-function createMainScreen(
-    user
+function generateAvatar(
+    gender
 ) {
 
+    let avatarList;
+
+
     if (
-        !videoLayout
+        gender === "female"
     ) {
 
-        return;
+        avatarList =
+            user_profile_girl_images;
+
+    } else {
+
+        avatarList =
+            user_profile_boy_images;
 
     }
 
 
-    videoLayout.style.display =
-        "block";
+    const randomIndex =
+        Math.floor(
+            Math.random()
+            *
+            avatarList.length
+        );
 
 
-    if (
-        videoLayoutGrid
-    ) {
-
-        videoLayoutGrid.innerHTML = `
-
-            <div class="ovc-welcome">
-
-                <div class="welcome-avatar">
-                    ${user.avatar}
-                </div>
-
-                <h2>
-                    Hey ${user.name}! 👋
-                </h2>
-
-                <p>
-                    Welcome to OVC.
-                </p>
-
-                <p>
-                    Your offline video calling
-                    experience starts here. 📡
-                </p>
-
-                <div class="ovc-status">
-
-                    <span>
-                        🟢
-                    </span>
-
-                    OVC is ready
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
+    return avatarList[
+        randomIndex
+    ];
 
 }
+
 
 
 /* =========================================================
@@ -636,207 +319,123 @@ function createMainScreen(
 
 function loginUser() {
 
-    if (
-        !nameInput
-    ) {
-
-        return;
-
-    }
-
-
     const username =
-        nameInput.value.trim();
+        usernameInput.value.trim();
 
 
     const gender =
-        genderInput
-            ? genderInput.value
-            : "male";
+        genderInput.value;
 
 
-    if (
-        username.length === 0
-    ) {
+    if (!username) {
 
-        showStatusMessage(
-            "Hey! You forgot to tell me your name. 😂"
+        showToast(
+            "Please enter your username.",
+            "⚠️"
         );
 
-
-        nameInput.focus();
-
+        usernameInput.focus();
 
         return;
 
     }
 
 
-    if (
-        username.length > 30
-    ) {
-
-        showStatusMessage(
-            "Whoa! That's a long name. Keep it under 30 characters! 😅"
+    const avatar =
+        generateAvatar(
+            gender
         );
 
 
-        return;
+    currentUser = {
 
-    }
-
-
-    const user = {
-
-        name:
+        username:
             username,
 
         gender:
             gender,
 
         avatar:
-            getUserAvatar(
-                gender
-            ),
-
-        createdAt:
-            Date.now()
+            avatar
 
     };
 
 
-    currentUser =
-        user;
+    /* =========================================
+       SAVE USER LOCALLY
+    ========================================== */
 
+    localStorage.setItem(
 
-    saveUser(
-        user
+        "ovc_user",
+
+        JSON.stringify(
+            currentUser
+        )
+
     );
 
 
-    updateProfile(
-        user
+    /* =========================================
+       HIDE LOGIN
+    ========================================== */
+
+    login.style.display =
+        "none";
+
+
+    /* =========================================
+       SHOW MAIN APP
+    ========================================== */
+
+    videoLayout.style.display =
+        "block";
+
+
+    /* =========================================
+       UPDATE USER UI
+    ========================================== */
+
+    welcomeUser.textContent =
+        `Hello, ${username}! 👋`;
+
+
+    userAvatar.textContent =
+        avatar;
+
+
+    /* =========================================
+       INITIAL STATUS
+    ========================================== */
+
+    setStatus(
+
+        "dancing",
+
+        "You're ready! 🎉",
+
+        "OVC is waiting for people on your local network."
+
     );
 
 
-    if (
-        loginSection
-    ) {
+    showBotMessage(
 
-        loginSection.style.display =
-            "none";
+        `Hey ${username}! Welcome to OVC 😎`
 
-    }
-
-
-    createMainScreen(
-        user
     );
 
 
-    showRandomGif();
+    showToast(
 
+        "Welcome to OVC!",
 
-    showStatusMessage(
-        `Welcome ${user.name}! 🚀`
-    );
+        "👋"
 
-
-    console.log(
-        "OVC User:",
-        user
-    );
-
-}
-
-
-/* =========================================================
-   LOGIN BUTTON
-========================================================= */
-
-if (
-    sendButton
-) {
-
-    sendButton.addEventListener(
-        "click",
-        loginUser
-    );
-
-}
-
-
-/* =========================================================
-   ENTER KEY LOGIN
-========================================================= */
-
-if (
-    nameInput
-) {
-
-    nameInput.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (
-                event.key ===
-                "Enter"
-            ) {
-
-                loginUser();
-
-            }
-
-        }
     );
 
 }
 
-
-/* =========================================================
-   PROFILE BUTTON
-========================================================= */
-
-if (
-    profileButton
-) {
-
-    profileButton.addEventListener(
-        "click",
-        () => {
-
-            if (
-                !currentUser
-            ) {
-
-                return;
-
-            }
-
-
-            const confirmLogout =
-                confirm(
-                    `Logged in as ${currentUser.name} ${currentUser.avatar}\n\nDo you want to reset your OVC profile?`
-                );
-
-
-            if (
-                confirmLogout
-            ) {
-
-                localStorage.removeItem(
-                    "ovc_user"
-                );
-
-
-                location.reload();
-
-            }
-
-        }
-    );
-
-}
 
 
 /* =========================================================
@@ -846,386 +445,502 @@ if (
 function restoreUser() {
 
     const savedUser =
-        loadUser();
+        localStorage.getItem(
+            "ovc_user"
+        );
 
 
-    if (
-        !savedUser
-    ) {
-
-        createLoginGif();
-
-
-        createBotMessage();
-
+    if (!savedUser) {
 
         return;
 
     }
 
 
-    currentUser =
-        savedUser;
+    try {
+
+        currentUser =
+            JSON.parse(
+                savedUser
+            );
 
 
-    if (
-        nameInput
-    ) {
+        usernameInput.value =
+            currentUser.username;
 
-        nameInput.value =
-            savedUser.name;
-
-    }
-
-
-    if (
-        genderInput
-    ) {
 
         genderInput.value =
-            savedUser.gender;
+            currentUser.gender;
+
+
+        welcomeUser.textContent =
+            `Hello, ${currentUser.username}! 👋`;
+
+
+        userAvatar.textContent =
+            currentUser.avatar;
+
+
+        login.style.display =
+            "none";
+
+
+        videoLayout.style.display =
+            "block";
+
+
+        setStatus(
+
+            "dancing",
+
+            "Welcome back! 👋",
+
+            "OVC is ready for your next connection."
+
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "OVC: Failed to restore user",
+            error
+        );
+
+
+        localStorage.removeItem(
+            "ovc_user"
+        );
 
     }
 
+}
 
-    updateProfile(
-        savedUser
+
+
+/* =========================================================
+   FIND PEOPLE
+========================================================= */
+
+function findUsers() {
+
+    setStatus(
+
+        "thinking",
+
+        "Looking for people... 🔍",
+
+        "Scanning your local OVC network."
+
     );
 
 
-    if (
-        loginSection
-    ) {
+    showToast(
 
-        loginSection.style.display =
-            "none";
+        "Searching for OVC users...",
 
-    }
+        "🔍"
+
+    );
 
 
-    createMainScreen(
-        savedUser
+    showBotMessage(
+
+        "Hmm... let me see who's nearby 👀"
+
+    );
+
+
+    /*
+     * SIMULATION ONLY
+     *
+     * This is where your future LAN
+     * WebRTC discovery logic will go.
+     */
+
+
+    setTimeout(
+
+        () => {
+
+            setStatus(
+
+                "confused",
+
+                "Nobody found yet 🤔",
+
+                "There are currently no other OVC users available."
+
+            );
+
+
+            showBotMessage(
+
+                "Looks like everyone is hiding today 😂"
+
+            );
+
+        },
+
+        3000
+
     );
 
 }
 
 
-/* =========================================================
-   CHANGE BOT MESSAGE
-========================================================= */
-
-setInterval(
-    () => {
-
-        if (
-            !currentUser
-        ) {
-
-            createBotMessage();
-
-        }
-
-    },
-    5000
-);
-
 
 /* =========================================================
-   CHANGE LOGIN GIF
+   CHECK NETWORK
 ========================================================= */
 
-setInterval(
-    () => {
+function checkNetwork() {
 
-        if (
-            !currentUser
-        ) {
+    setStatus(
 
-            showRandomGif();
+        "thinking",
 
-        }
+        "Checking network... 📡",
 
-    },
-    8000
-);
+        "Checking your current connection status."
 
-
-/* =========================================================
-   PWA INSTALL PROMPT
-========================================================= */
-
-window.addEventListener(
-    "beforeinstallprompt",
-    (event) => {
-
-        console.log(
-            "OVC can be installed"
-        );
-
-
-        // Prevent Chrome's automatic banner
-        event.preventDefault();
-
-
-        // Save install event
-        deferredInstallPrompt =
-            event;
-
-
-        // Don't show if already installed
-        if (
-            window.matchMedia(
-                "(display-mode: standalone)"
-            ).matches
-        ) {
-
-            return;
-
-        }
-
-
-        // Check if user dismissed prompt
-        const dismissed =
-            sessionStorage.getItem(
-                "ovc_install_dismissed"
-            );
-
-
-        if (
-            dismissed === "true"
-        ) {
-
-            return;
-
-        }
-
-
-        // Find custom install prompt
-        const installPrompt =
-            document.querySelector(
-                ".install-prompt"
-            );
-
-
-        if (
-            installPrompt
-        ) {
-
-            setTimeout(
-                () => {
-
-                    installPrompt.classList.add(
-                        "show"
-                    );
-
-                },
-                2500
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INSTALL BUTTON
-========================================================= */
-
-const installButton =
-    document.querySelector(
-        "#install-button, .install-button"
     );
 
 
-if (
-    installButton
-) {
+    setTimeout(
 
-    installButton.addEventListener(
-        "click",
-        async () => {
+        () => {
 
-            if (
-                !deferredInstallPrompt
-            ) {
+            setStatus(
 
-                showToast(
-                    "OVC installation is not available right now."
-                );
+                "success",
+
+                "Network ready! 🟢",
+
+                "OVC is ready to communicate with nearby devices."
+
+            );
 
 
-                return;
+            showToast(
 
-            }
+                "Network check completed.",
 
+                "✅"
 
-            // Show native browser install dialog
-            deferredInstallPrompt.prompt();
-
-
-            try {
-
-                const result =
-                    await deferredInstallPrompt.userChoice;
+            );
 
 
-                console.log(
-                    "OVC installation result:",
-                    result.outcome
-                );
+            showBotMessage(
+
+                "The network looks good! 🚀"
+
+            );
+
+        },
+
+        2000
+
+    );
+
+}
 
 
-                if (
-                    result.outcome ===
-                    "accepted"
-                ) {
 
-                    showToast(
-                        "🎉 OVC is being installed!"
-                    );
+/* =========================================================
+   LOGOUT
+========================================================= */
 
-                }
+function logoutUser() {
 
-                else {
+    setStatus(
 
-                    showToast(
-                        "Installation cancelled."
-                    );
+        "goodbye",
 
-                }
+        "Goodbye! 👋",
 
-            }
+        "See you next time on OVC."
 
-            catch (
-                error
-            ) {
-
-                console.error(
-                    "OVC installation error:",
-                    error
-                );
-
-            }
+    );
 
 
-            // Prompt can only be used once
-            deferredInstallPrompt =
+    showToast(
+
+        "Logging out...",
+
+        "👋"
+
+    );
+
+
+    setTimeout(
+
+        () => {
+
+            localStorage.removeItem(
+                "ovc_user"
+            );
+
+
+            currentUser =
                 null;
 
 
-            const installPrompt =
-                document.querySelector(
-                    ".install-prompt"
-                );
+            videoLayout.style.display =
+                "none";
 
 
-            if (
-                installPrompt
-            ) {
+            login.style.display =
+                "flex";
 
-                installPrompt.classList.remove(
-                    "show"
-                );
 
-            }
+            usernameInput.value =
+                "";
 
-        }
+
+            showBotMessage(
+
+                "Welcome back! 👋"
+
+            );
+
+
+            /*
+             * Keep the login GIF as welcome.gif
+             */
+
+            loginGif.src =
+                gifs.welcome;
+
+        },
+
+        1000
+
     );
 
 }
 
 
-/* =========================================================
-   CLOSE INSTALL PROMPT
-========================================================= */
-
-const closeInstall =
-    document.querySelector(
-        "#close-install, .close-install"
-    );
-
-
-if (
-    closeInstall
-) {
-
-    closeInstall.addEventListener(
-        "click",
-        () => {
-
-            const installPrompt =
-                document.querySelector(
-                    ".install-prompt"
-                );
-
-
-            if (
-                installPrompt
-            ) {
-
-                installPrompt.classList.remove(
-                    "show"
-                );
-
-            }
-
-
-            sessionStorage.setItem(
-                "ovc_install_dismissed",
-                "true"
-            );
-
-        }
-    );
-
-}
-
 
 /* =========================================================
-   APP INSTALLED
+   EVENT LISTENERS
 ========================================================= */
 
-window.addEventListener(
-    "appinstalled",
-    () => {
+sendButton.addEventListener(
 
-        console.log(
-            "🎉 OVC installed successfully!"
-        );
+    "click",
 
+    loginUser
 
-        deferredInstallPrompt =
-            null;
-
-
-        const installPrompt =
-            document.querySelector(
-                ".install-prompt"
-            );
-
-
-        if (
-            installPrompt
-        ) {
-
-            installPrompt.classList.remove(
-                "show"
-            );
-
-        }
-
-
-        showToast(
-            "🎉 Welcome to OVC!"
-        );
-
-    }
 );
 
 
+usernameInput.addEventListener(
+
+    "keydown",
+
+    (event) => {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            loginUser();
+
+        }
+
+    }
+
+);
+
+
+findUsersButton.addEventListener(
+
+    "click",
+
+    findUsers
+
+);
+
+
+statusButton.addEventListener(
+
+    "click",
+
+    checkNetwork
+
+);
+
+
+logoutButton.addEventListener(
+
+    "click",
+
+    logoutUser
+
+);
+
+
+
 /* =========================================================
-   SERVICE WORKER REGISTRATION
+   INITIALIZE
+========================================================= */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        restoreUser();
+
+    }
+
+);
+
+
+
+/* =========================================================
+   PWA INSTALLATION
+========================================================= */
+
+let deferredPrompt =
+    null;
+
+
+const installPrompt =
+    document.getElementById(
+        "install-prompt"
+    );
+
+
+const installButton =
+    document.getElementById(
+        "install-button"
+    );
+
+
+const closeInstall =
+    document.getElementById(
+        "close-install"
+    );
+
+
+
+window.addEventListener(
+
+    "beforeinstallprompt",
+
+    (event) => {
+
+        event.preventDefault();
+
+
+        deferredPrompt =
+            event;
+
+
+        installPrompt.classList.add(
+            "show"
+        );
+
+    }
+
+);
+
+
+
+installButton.addEventListener(
+
+    "click",
+
+    async () => {
+
+        if (!deferredPrompt) {
+
+            return;
+
+        }
+
+
+        deferredPrompt.prompt();
+
+
+        const result =
+            await deferredPrompt.userChoice;
+
+
+        console.log(
+
+            "OVC Install:",
+            result.outcome
+
+        );
+
+
+        deferredPrompt =
+            null;
+
+
+        installPrompt.classList.remove(
+            "show"
+        );
+
+    }
+
+);
+
+
+
+closeInstall.addEventListener(
+
+    "click",
+
+    () => {
+
+        installPrompt.classList.remove(
+            "show"
+        );
+
+    }
+
+);
+
+
+
+window.addEventListener(
+
+    "appinstalled",
+
+    () => {
+
+        console.log(
+            "OVC installed successfully."
+        );
+
+
+        installPrompt.classList.remove(
+            "show"
+        );
+
+
+        showToast(
+
+            "OVC installed successfully!",
+
+            "📱"
+
+        );
+
+    }
+
+);
+
+
+
+/* =========================================================
+   SERVICE WORKER
 ========================================================= */
 
 if (
@@ -1234,61 +949,50 @@ if (
 ) {
 
     window.addEventListener(
+
         "load",
+
         () => {
 
             navigator.serviceWorker
                 .register(
-                    "./sw.js"
+                    "sw.js"
                 )
 
                 .then(
+
                     (registration) => {
 
                         console.log(
+
                             "OVC Service Worker registered:",
+
                             registration.scope
+
                         );
 
                     }
+
                 )
 
                 .catch(
+
                     (error) => {
 
                         console.error(
+
                             "OVC Service Worker registration failed:",
+
                             error
+
                         );
 
                     }
+
                 );
 
         }
+
     );
 
 }
-
-
-/* =========================================================
-   INITIALIZE OVC
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        console.log(
-            "🚀 OVC v0.1 starting..."
-        );
-
-
-        restoreUser();
-
-
-        console.log(
-            "OVC v0.1 ready."
-        );
-
-    }
-);
