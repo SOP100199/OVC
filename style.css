@@ -1,161 +1,1297 @@
-/* =========================================
-   OVC INSTALL PROMPT
-========================================= */
+/* =========================================================
+   OVC v0.1
+   Offline Video Calling
+   Complete Responsive Stylesheet
+========================================================= */
 
-.install-prompt {
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    width: 100%;
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+
+body {
+    width: 100%;
+    min-height: 100vh;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #25253b 0%,
+            #11111b 35%,
+            #08090d 70%
+        );
+
+    color: #ffffff;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root {
+
+    --background:
+        #08090d;
+
+    --surface:
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+    --surface-light:
+        rgba(
+            255,
+            255,
+            255,
+            0.1
+        );
+
+    --border:
+        rgba(
+            255,
+            255,
+            255,
+            0.1
+        );
+
+    --text:
+        #ffffff;
+
+    --text-muted:
+        rgba(
+            255,
+            255,
+            255,
+            0.65
+        );
+
+    --text-soft:
+        rgba(
+            255,
+            255,
+            255,
+            0.45
+        );
+
+    --radius-small:
+        10px;
+
+    --radius-medium:
+        18px;
+
+    --radius-large:
+        28px;
+
+    --shadow:
+        0 20px 60px
+        rgba(
+            0,
+            0,
+            0,
+            0.35
+        );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+nav {
 
     position: fixed;
 
-    right: 25px;
+    top: 0;
+    left: 0;
 
-    bottom: 25px;
+    width: 100%;
 
-    width: min(420px,
-            calc(100% - 40px));
+    height: 70px;
 
     display: flex;
 
     align-items: center;
 
-    gap: 15px;
+    justify-content: space-between;
 
-    padding: 18px;
+    padding:
+        0 30px;
 
-    background: rgba(20,
-            20,
-            30,
-            0.95);
+    background:
+        rgba(
+            8,
+            9,
+            13,
+            0.75
+        );
 
-    border: 1px solid rgba(255,
-            255,
-            255,
-            0.1);
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 15px 50px rgba(0,
-            0,
-            0,
-            0.4);
+    border-bottom:
+        1px solid
+        var(--border);
 
     backdrop-filter:
-        blur(15px);
+        blur(20px);
 
     -webkit-backdrop-filter:
-        blur(15px);
+        blur(20px);
 
-    z-index: 9999;
-
-    transform:
-        translateY(150px);
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    transition:
-        transform 0.5s ease,
-        opacity 0.5s ease,
-        visibility 0.5s;
+    z-index: 1000;
 
 }
 
 
-/* SHOW INSTALL PROMPT */
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo {
+
+    font-size:
+        24px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        2px;
+
+    user-select:
+        none;
+
+}
+
+
+/* =========================================================
+   NAV CONTROLS
+========================================================= */
+
+.navcontrols {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+}
+
+
+/* =========================================================
+   PROFILE BUTTON
+========================================================= */
+
+.nav-profile {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--surface);
+
+    border:
+        1px solid
+        var(--border);
+
+    font-size:
+        20px;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+
+}
+
+
+.nav-profile:hover {
+
+    transform:
+        scale(1.08);
+
+    background:
+        var(--surface-light);
+
+}
+
+
+/* =========================================================
+   LOGIN PAGE
+========================================================= */
+
+.login {
+
+    min-height:
+        100vh;
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        100px 20px 40px;
+
+}
+
+
+/* =========================================================
+   LOGIN MAIN CARD
+========================================================= */
+
+.login-main {
+
+    width:
+        min(
+            500px,
+            100%
+        );
+
+    padding:
+        40px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    text-align:
+        center;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.055
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-large);
+
+    box-shadow:
+        var(--shadow);
+
+    backdrop-filter:
+        blur(25px);
+
+    -webkit-backdrop-filter:
+        blur(25px);
+
+    animation:
+        loginAppear 0.8s ease
+        forwards;
+
+}
+
+
+/* =========================================================
+   LOGIN ANIMATION
+========================================================= */
+
+@keyframes loginAppear {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(30px)
+            scale(0.96);
+
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN GIF
+========================================================= */
+
+.login-gif-container {
+
+    width:
+        150px;
+
+    height:
+        150px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-bottom:
+        15px;
+
+    overflow:
+        hidden;
+
+    border-radius:
+        25px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.04
+        );
+
+}
+
+
+.login-gif-container img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        contain;
+
+}
+
+
+/* =========================================================
+   LOGIN TITLE
+========================================================= */
+
+.login-main h1 {
+
+    font-size:
+        clamp(
+            32px,
+            6vw,
+            52px
+        );
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        2px;
+
+    margin-bottom:
+        8px;
+
+}
+
+
+/* =========================================================
+   LOGIN DESCRIPTION
+========================================================= */
+
+.login-main > p {
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        15px;
+
+    margin-bottom:
+        25px;
+
+}
+
+
+/* =========================================================
+   BOT MESSAGE
+========================================================= */
+
+.bot-message {
+
+    width:
+        100%;
+
+    min-height:
+        48px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        12px 18px;
+
+    margin-bottom:
+        25px;
+
+    background:
+        var(--surface);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        15px;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.5;
+
+    animation:
+        messageAppear 0.4s ease;
+
+}
+
+
+@keyframes messageAppear {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(10px);
+
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   INPUT SECTION
+========================================================= */
+
+.input {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        20px;
+
+    text-align:
+        left;
+
+}
+
+
+/* =========================================================
+   INPUT GROUP
+========================================================= */
+
+.input-username,
+.input-gender {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+
+}
+
+
+.input label {
+
+    font-size:
+        13px;
+
+    color:
+        var(--text-muted);
+
+    font-weight:
+        600;
+
+}
+
+
+/* =========================================================
+   USERNAME INPUT BOX
+========================================================= */
+
+.inputbox {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+}
+
+
+/* =========================================================
+   TEXT INPUT
+========================================================= */
+
+.inputbox input {
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+    height:
+        50px;
+
+    padding:
+        0 16px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-small);
+
+    outline:
+        none;
+
+    color:
+        #ffffff;
+
+    font-size:
+        15px;
+
+    transition:
+        border 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+.inputbox input::placeholder {
+
+    color:
+        var(--text-soft);
+
+}
+
+
+.inputbox input:focus {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.09
+        );
+
+    border-color:
+        rgba(
+            255,
+            255,
+            255,
+            0.35
+        );
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            255,
+            255,
+            255,
+            0.04
+        );
+
+}
+
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+#send {
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+    flex-shrink:
+        0;
+
+    border:
+        none;
+
+    border-radius:
+        var(--radius-small);
+
+    background:
+        #ffffff;
+
+    color:
+        #08090d;
+
+    font-size:
+        20px;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+#send:hover {
+
+    transform:
+        translateY(-2px)
+        scale(1.03);
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            255,
+            255,
+            255,
+            0.15
+        );
+
+}
+
+
+#send:active {
+
+    transform:
+        scale(0.95);
+
+}
+
+
+/* =========================================================
+   GENDER SELECT
+========================================================= */
+
+.input-gender select {
+
+    width:
+        100%;
+
+    height:
+        50px;
+
+    padding:
+        0 15px;
+
+    background:
+        #181922;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-small);
+
+    color:
+        #ffffff;
+
+    outline:
+        none;
+
+    font-size:
+        15px;
+
+    cursor:
+        pointer;
+
+}
+
+
+.input-gender select:focus {
+
+    border-color:
+        rgba(
+            255,
+            255,
+            255,
+            0.35
+        );
+
+}
+
+
+/* =========================================================
+   VIDEO LAYOUT
+   Future OVC functionality
+========================================================= */
+
+#video-layout {
+
+    display:
+        none;
+
+    width:
+        100%;
+
+    min-height:
+        100vh;
+
+    padding:
+        100px 20px 40px;
+
+}
+
+
+/* =========================================================
+   VIDEO GRID
+========================================================= */
+
+.video-grid {
+
+    width:
+        min(
+            1200px,
+            100%
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap:
+        20px;
+
+}
+
+
+/* =========================================================
+   VIDEO CONTAINER
+========================================================= */
+
+.video-container {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    aspect-ratio:
+        16 / 9;
+
+    overflow:
+        hidden;
+
+    background:
+        #050507;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-medium);
+
+    box-shadow:
+        var(--shadow);
+
+}
+
+
+.video-container video {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+}
+
+
+/* =========================================================
+   VIDEO LABEL
+========================================================= */
+
+.video-label {
+
+    position:
+        absolute;
+
+    left:
+        15px;
+
+    bottom:
+        15px;
+
+    padding:
+        8px 12px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.6
+        );
+
+    border-radius:
+        10px;
+
+    font-size:
+        13px;
+
+    backdrop-filter:
+        blur(10px);
+
+}
+
+
+/* =========================================================
+   VIDEO CONTROLS
+========================================================= */
+
+.controls {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        15px;
+
+    margin-top:
+        25px;
+
+}
+
+
+.controls button {
+
+    width:
+        55px;
+
+    height:
+        55px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--surface);
+
+    color:
+        #ffffff;
+
+    font-size:
+        20px;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.controls button:hover {
+
+    transform:
+        scale(1.08);
+
+    background:
+        var(--surface-light);
+
+}
+
+
+.controls .end-call {
+
+    background:
+        rgba(
+            255,
+            70,
+            70,
+            0.8
+        );
+
+}
+
+
+.controls .end-call:hover {
+
+    background:
+        rgba(
+            255,
+            70,
+            70,
+            1
+        );
+
+}
+
+
+/* =========================================================
+   INSTALL PWA PROMPT
+========================================================= */
+
+.install-prompt {
+
+    position:
+        fixed;
+
+    right:
+        25px;
+
+    bottom:
+        25px;
+
+    width:
+        min(
+            420px,
+            calc(
+                100% - 40px
+            )
+        );
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        15px;
+
+    padding:
+        18px;
+
+    background:
+        rgba(
+            20,
+            20,
+            30,
+            0.96
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-medium);
+
+    box-shadow:
+        0 20px 60px
+        rgba(
+            0,
+            0,
+            0,
+            0.5
+        );
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+
+    z-index:
+        9999;
+
+    transform:
+        translateY(
+            150px
+        );
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.5s ease,
+        visibility 0.5s ease;
+
+}
+
 
 .install-prompt.show {
 
     transform:
         translateY(0);
 
-    opacity: 1;
+    opacity:
+        1;
 
-    visibility: visible;
+    visibility:
+        visible;
 
 }
 
 
-/* INSTALL ICON */
+/* =========================================================
+   INSTALL ICON
+========================================================= */
 
 .install-icon {
 
-    min-width: 50px;
+    width:
+        50px;
 
-    height: 50px;
+    height:
+        50px;
 
-    display: flex;
+    min-width:
+        50px;
 
-    align-items: center;
+    display:
+        flex;
 
-    justify-content: center;
+    align-items:
+        center;
 
-    font-size: 28px;
+    justify-content:
+        center;
+
+    font-size:
+        27px;
 
     background:
-        rgba(255,
-            255,
-            255,
-            0.08);
+        var(--surface);
 
-    border-radius: 14px;
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        14px;
 
 }
 
 
-/* INSTALL CONTENT */
+/* =========================================================
+   INSTALL CONTENT
+========================================================= */
 
 .install-content {
 
-    flex: 1;
+    flex:
+        1;
+
+    min-width:
+        0;
 
 }
 
 
 .install-content h3 {
 
-    margin: 0 0 4px;
+    margin:
+        0 0 5px;
 
-    font-size: 16px;
+    font-size:
+        16px;
 
 }
 
 
 .install-content p {
 
-    margin: 0;
+    margin:
+        0;
 
-    font-size: 13px;
+    color:
+        var(--text-muted);
 
-    opacity: 0.7;
+    font-size:
+        12px;
 
-    line-height: 1.4;
+    line-height:
+        1.5;
 
 }
 
 
-/* INSTALL BUTTON */
+/* =========================================================
+   INSTALL BUTTON
+========================================================= */
 
 .install-button {
 
-    border: none;
+    border:
+        none;
 
-    padding: 10px 16px;
+    padding:
+        10px 16px;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
     background:
-        white;
+        #ffffff;
 
     color:
-        black;
+        #08090d;
 
-    font-weight: 600;
+    font-weight:
+        700;
 
-    cursor: pointer;
+    font-size:
+        13px;
+
+    cursor:
+        pointer;
+
+    white-space:
+        nowrap;
 
     transition:
-        transform 0.2s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 
 }
 
@@ -163,89 +1299,839 @@
 .install-button:hover {
 
     transform:
-        scale(1.05);
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(
+            255,
+            255,
+            255,
+            0.15
+        );
 
 }
 
 
-/* CLOSE BUTTON */
+.install-button:active {
+
+    transform:
+        scale(0.95);
+
+}
+
+
+/* =========================================================
+   CLOSE INSTALL BUTTON
+========================================================= */
 
 .close-install {
 
-    position: absolute;
+    position:
+        absolute;
 
-    right: 8px;
+    top:
+        7px;
 
-    top: 8px;
+    right:
+        7px;
 
-    width: 24px;
+    width:
+        24px;
 
-    height: 24px;
+    height:
+        24px;
 
-    border: none;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        none;
 
     background:
         transparent;
 
     color:
-        white;
+        #ffffff;
 
-    opacity: 0.5;
+    opacity:
+        0.5;
 
-    cursor: pointer;
+    cursor:
+        pointer;
+
+    font-size:
+        12px;
 
 }
 
 
 .close-install:hover {
 
-    opacity: 1;
+    opacity:
+        1;
 
 }
 
 
-/* =========================================
-   MOBILE INSTALL PROMPT
-========================================= */
+/* =========================================================
+   TOAST
+========================================================= */
 
-@media (max-width: 600px) {
+.toast {
+
+    position:
+        fixed;
+
+    right:
+        25px;
+
+    bottom:
+        25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    max-width:
+        350px;
+
+    padding:
+        13px 18px;
+
+    background:
+        rgba(
+            20,
+            20,
+            30,
+            0.95
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        12px;
+
+    box-shadow:
+        var(--shadow);
+
+    color:
+        #ffffff;
+
+    font-size:
+        13px;
+
+    z-index:
+        10000;
+
+    opacity:
+        0;
+
+    transform:
+        translateY(20px);
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+
+}
+
+
+.toast.show {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* =========================================================
+   GIF STATUS SYSTEM
+========================================================= */
+
+.status-gif {
+
+    width:
+        150px;
+
+    height:
+        150px;
+
+    object-fit:
+        contain;
+
+    opacity:
+        0;
+
+    transform:
+        translateY(20px);
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+
+}
+
+
+.status-gif.show {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+.status-message {
+
+    position:
+        fixed;
+
+    right:
+        25px;
+
+    bottom:
+        25px;
+
+    max-width:
+        320px;
+
+    padding:
+        14px 18px;
+
+    background:
+        rgba(
+            20,
+            20,
+            30,
+            0.95
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        15px;
+
+    box-shadow:
+        var(--shadow);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.5;
+
+    opacity:
+        0;
+
+    transform:
+        translateY(20px);
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+
+    z-index:
+        9000;
+
+}
+
+
+.status-message.show {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* =========================================================
+   USER LIST
+========================================================= */
+
+#users-list {
+
+    width:
+        min(
+            800px,
+            100%
+        );
+
+    margin:
+        30px auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(
+                220px,
+                1fr
+            )
+        );
+
+    gap:
+        15px;
+
+}
+
+
+/* =========================================================
+   USER CARD
+========================================================= */
+
+.user-card {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    padding:
+        15px;
+
+    background:
+        var(--surface);
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius-medium);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.user-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    background:
+        var(--surface-light);
+
+}
+
+
+/* =========================================================
+   USER AVATAR
+========================================================= */
+
+.user-avatar {
+
+    width:
+        45px;
+
+    height:
+        45px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-shrink:
+        0;
+
+    font-size:
+        25px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    border-radius:
+        50%;
+
+}
+
+
+/* =========================================================
+   USER INFO
+========================================================= */
+
+.user-info {
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+}
+
+
+.user-info h3 {
+
+    font-size:
+        14px;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+.user-info span {
+
+    display:
+        block;
+
+    margin-top:
+        4px;
+
+    font-size:
+        11px;
+
+    color:
+        var(--text-muted);
+
+}
+
+
+/* =========================================================
+   CALL BUTTON
+========================================================= */
+
+.call-button {
+
+    padding:
+        9px 12px;
+
+    border:
+        none;
+
+    border-radius:
+        9px;
+
+    background:
+        #ffffff;
+
+    color:
+        #08090d;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease;
+
+}
+
+
+.call-button:hover {
+
+    transform:
+        scale(1.05);
+
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+
+    width:
+        8px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background:
+        #08090d;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.15
+        );
+
+    border-radius:
+        10px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.25
+        );
+
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+========================================================= */
+
+::selection {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.2
+        );
+
+    color:
+        #ffffff;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+    max-width: 768px
+) {
+
+    nav {
+
+        height:
+            64px;
+
+        padding:
+            0 20px;
+
+    }
+
+
+    .logo {
+
+        font-size:
+            21px;
+
+    }
+
+
+    .login {
+
+        padding:
+            90px 15px 30px;
+
+    }
+
+
+    .login-main {
+
+        padding:
+            30px 22px;
+
+        border-radius:
+            22px;
+
+    }
+
+
+    .login-gif-container {
+
+        width:
+            125px;
+
+        height:
+            125px;
+
+    }
+
+
+    .video-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    #video-layout {
+
+        padding:
+            85px 15px 30px;
+
+    }
+
 
     .install-prompt {
 
-        left: 15px;
+        right:
+            15px;
 
-        right: 15px;
+        bottom:
+            15px;
 
-        bottom: 15px;
+    }
 
-        width: auto;
+}
 
-        padding: 15px;
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+    max-width: 600px
+) {
+
+    nav {
+
+        padding:
+            0 15px;
+
+    }
+
+
+    .nav-profile {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        font-size:
+            18px;
+
+    }
+
+
+    .login {
+
+        padding:
+            85px 12px 25px;
+
+    }
+
+
+    .login-main {
+
+        width:
+            100%;
+
+        padding:
+            25px 18px;
+
+        border-radius:
+            20px;
+
+    }
+
+
+    .login-gif-container {
+
+        width:
+            110px;
+
+        height:
+            110px;
+
+    }
+
+
+    .login-main h1 {
+
+        font-size:
+            36px;
+
+    }
+
+
+    .login-main > p {
+
+        font-size:
+            13px;
+
+    }
+
+
+    .bot-message {
+
+        font-size:
+            13px;
+
+        padding:
+            10px 12px;
+
+    }
+
+
+    .inputbox {
+
+        gap:
+            7px;
+
+    }
+
+
+    .inputbox input {
+
+        height:
+            48px;
+
+        padding:
+            0 13px;
+
+        font-size:
+            14px;
+
+    }
+
+
+    #send {
+
+        width:
+            48px;
+
+        height:
+            48px;
+
+    }
+
+
+    .input-gender select {
+
+        height:
+            48px;
+
+        font-size:
+            14px;
+
+    }
+
+
+    .install-prompt {
+
+        left:
+            12px;
+
+        right:
+            12px;
+
+        bottom:
+            12px;
+
+        width:
+            auto;
+
+        padding:
+            15px;
+
+        gap:
+            10px;
 
     }
 
 
     .install-icon {
 
-        min-width: 42px;
+        width:
+            42px;
 
-        height: 42px;
+        height:
+            42px;
 
-        font-size: 22px;
+        min-width:
+            42px;
+
+        font-size:
+            22px;
 
     }
 
 
     .install-content h3 {
 
-        font-size: 14px;
+        font-size:
+            14px;
 
     }
 
 
     .install-content p {
 
-        font-size: 12px;
+        font-size:
+            11px;
 
     }
 
@@ -253,10 +2139,143 @@
     .install-button {
 
         padding:
-            9px 12px;
+            9px 11px;
 
         font-size:
-            12px;
+            11px;
+
+    }
+
+
+    .toast {
+
+        left:
+            15px;
+
+        right:
+            15px;
+
+        bottom:
+            15px;
+
+        max-width:
+            none;
+
+    }
+
+
+    .status-message {
+
+        left:
+            15px;
+
+        right:
+            15px;
+
+        bottom:
+            15px;
+
+        max-width:
+            none;
+
+    }
+
+
+    .controls {
+
+        gap:
+            10px;
+
+    }
+
+
+    .controls button {
+
+        width:
+            50px;
+
+        height:
+            50px;
+
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+========================================================= */
+
+@media (
+    max-width: 380px
+) {
+
+    .login-main {
+
+        padding:
+            22px 15px;
+
+    }
+
+
+    .login-gif-container {
+
+        width:
+            95px;
+
+        height:
+            95px;
+
+    }
+
+
+    .login-main h1 {
+
+        font-size:
+            32px;
+
+    }
+
+
+    .install-icon {
+
+        display:
+            none;
+
+    }
+
+
+    .install-content p {
+
+        display:
+            none;
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    * {
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+
+        scroll-behavior:
+            auto !important;
 
     }
 
