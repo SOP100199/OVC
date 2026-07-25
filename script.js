@@ -2,7 +2,49 @@
    OVC - OFFLINE VIDEO CALLING
    VERSION 1.0
 ===================================================== */
+// =====================================================
+// OVC SIGNALING SERVER
+// =====================================================
 
+const SIGNALING_SERVER =
+    "https://ovc-signaling.onrender.com";
+
+const socket = io(
+    SIGNALING_SERVER,
+    {
+        transports: ["websocket", "polling"]
+    }
+);
+
+socket.on("connect", () => {
+
+    console.log(
+        "🟢 Connected to OVC signaling server",
+        socket.id
+    );
+
+    if (currentUser) {
+
+        socket.emit(
+            "register-user",
+            {
+                id: currentUser.id,
+                username: currentUser.username,
+                avatar: currentUser.avatar
+            }
+        );
+
+    }
+
+});
+
+socket.on("disconnect", () => {
+
+    console.log(
+        "🔴 Disconnected from OVC signaling server"
+    );
+
+});
 /* =====================================================
    DOM ELEMENTS
 ===================================================== */
@@ -391,8 +433,12 @@ function loginUser() {
 
     version: OVC_VERSION,
   };
-
   saveUser();
+if (socket.connected) {
+
+    registerUserWithServer();
+
+}
 
   updateUserInterface();
 
@@ -448,38 +494,210 @@ function saveUser() {
 }
 
 function loadStoredUser() {
-  try {
-    const storedUser = localStorage.getItem(STORAGE_KEY);
 
-    if (!storedUser) {
-      return;
+    try {
+
+        const storedUser =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+
+        if (!storedUser) {
+
+            return;
+
+        }
+
+
+        currentUser =
+            JSON.parse(
+                storedUser
+            );
+
+
+        if (
+            !currentUser ||
+            !currentUser.username
+        ) {
+
+            currentUser = null;
+
+            return;
+
+        }
+
+
+        /*
+        ================================================
+        UPDATE USER INTERFACE
+        ================================================
+        */
+
+        updateUserInterface();
+
+
+        /*
+        ================================================
+        HIDE LOGIN
+        ================================================
+        */
+
+        if (loginSection) {
+
+            loginSection.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        /*
+        ================================================
+        SHOW MAIN APPLICATION
+        ================================================
+        */
+
+        if (mainContent) {
+
+            mainContent.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        /*
+        ================================================
+        REGISTER USER WITH SIGNALING SERVER
+        ================================================
+        */
+
+        if (
+            socket &&
+            socket.connected
+        ) {
+
+            registerUserWithServer();
+
+        }
+
+        else {
+
+            console.log(
+                "⏳ Socket not connected yet. User will register when connected."
+            );
+
+        }
+
     }
 
-    currentUser = JSON.parse(storedUser);
+    catch (error) {
 
-    if (!currentUser || !currentUser.username) {
-      currentUser = null;
+        console.error(
+            "OVC user loading error:",
+            error
+        );
 
-      return;
+
+        localStorage.removeItem(
+            STORAGE_KEY
+        );
+
+
+        currentUser =
+            null;
+
     }
 
-    updateUserInterface();
-
-    if (loginSection) {
-      loginSection.classList.add("hidden");
-    }
-
-    if (mainContent) {
-      mainContent.classList.remove("hidden");
-    }
-  } catch (error) {
-    console.error("OVC user loading error:", error);
-
-    localStorage.removeItem(STORAGE_KEY);
-
-    currentUser = null;
-  }
 }
+
+/* =====================================================
+   SEND CONNECTION REQUEST
+===================================================== */
+
+function sendConnectionRequest(user) {
+
+    if (!currentUser) {
+
+        showToast(
+            "⚠️",
+            "Please log in first."
+        );
+
+        return;
+
+    }
+
+
+    if (!socket || !socket.connected) {
+
+        console.error(
+            "❌ Socket is not connected"
+        );
+
+        showToast(
+            "❌",
+            "Not connected to OVC server."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "📡 Sending connection request to:",
+        user.username
+    );
+
+
+    socket.emit(
+        "connection-request",
+        {
+
+            from: {
+
+                id:
+                    currentUser.id,
+
+                username:
+                    currentUser.username,
+
+                avatar:
+                    currentUser.avatar
+
+            },
+
+            to: {
+
+                id:
+                    user.id,
+
+                username:
+                    user.username,
+
+                avatar:
+                    user.avatar
+
+            }
+
+        }
+    );
+
+
+    showToast(
+        "📡",
+        `Connection request sent to ${user.username}`
+    );
+
+
+    console.log(
+        "✅ Connection request sent"
+    );
+
+}
+
 
 /* =====================================================
    UPDATE USER UI
@@ -925,51 +1143,169 @@ async function openQRScanner() {
 ===================================================== */
 
 async function handleQRScan(decodedText) {
-  console.log("📦 QR data:", decodedText);
 
-  let userData;
+    console.log(
+        "📦 QR data:",
+        decodedText
+    );
 
-  try {
-    userData = JSON.parse(decodedText);
-  } catch (error) {
-    console.error("Invalid QR JSON:", error);
 
-    showToast("❌", "Invalid QR code.");
+    let userData;
 
-    return;
-  }
 
-  if (!userData || userData.type !== "OVC_USER") {
-    showToast("❌", "This is not an OVC QR code.");
+    /*
+    =================================================
+    PARSE QR DATA
+    =================================================
+    */
 
-    return;
-  }
+    try {
 
-  if (!userData.id || !userData.username) {
-    showToast("❌", "Invalid OVC profile.");
+        userData =
+            JSON.parse(
+                decodedText
+            );
 
-    return;
-  }
+    }
 
-  if (currentUser && userData.id === currentUser.id) {
-    showToast("😅", "That's your own QR code!");
+    catch (error) {
 
-    return;
-  }
+        console.error(
+            "❌ Invalid QR JSON:",
+            error
+        );
 
-  console.log("✅ Valid OVC user:", userData.username);
+        showToast(
+            "❌",
+            "Invalid QR code."
+        );
 
-  await closeQRScanner();
+        return;
 
-  addPerson(userData);
+    }
 
-  showToast(
-    "✅",
 
-    `${userData.username} added to People!`,
-  );
+    /*
+    =================================================
+    CHECK OVC QR TYPE
+    =================================================
+    */
 
-  vibrate([100, 50, 100]);
+    if (
+        !userData ||
+        userData.type !== "OVC_USER"
+    ) {
+
+        showToast(
+            "❌",
+            "This is not an OVC QR code."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    =================================================
+    CHECK REQUIRED USER DATA
+    =================================================
+    */
+
+    if (
+        !userData.id ||
+        !userData.username
+    ) {
+
+        showToast(
+            "❌",
+            "Invalid OVC profile."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    =================================================
+    PREVENT ADDING YOURSELF
+    =================================================
+    */
+
+    if (
+        currentUser &&
+        userData.id === currentUser.id
+    ) {
+
+        showToast(
+            "😅",
+            "That's your own QR code!"
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "✅ Valid OVC user:",
+        userData.username
+    );
+
+
+    /*
+    =================================================
+    CLOSE QR SCANNER
+    =================================================
+    */
+
+    await closeQRScanner();
+
+
+    /*
+    =================================================
+    ADD USER TO LOCAL PEOPLE LIST
+    =================================================
+    */
+
+    addPerson(
+        userData
+    );
+
+
+    /*
+    =================================================
+    SEND CONNECTION REQUEST
+    TO THE OTHER DEVICE
+    =================================================
+    */
+
+    sendConnectionRequest(
+        userData
+    );
+
+
+    /*
+    =================================================
+    USER FEEDBACK
+    =================================================
+    */
+
+    showToast(
+        "📡",
+        `Connection request sent to ${userData.username}`
+    );
+
+
+    vibrate(
+        [
+            100,
+            50,
+            100
+        ]
+    );
+
 }
 
 /* =====================================================
