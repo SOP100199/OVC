@@ -3196,17 +3196,16 @@ function openQRScanner() {
     });
 
 }
-function handleQRScan(
-    decodedText
-) {
+function handleQRScan(decodedText) {
 
     console.log(
-        "Scanned QR:",
+        "📷 Raw QR data:",
         decodedText
     );
 
     let userData;
 
+    // Try to decode JSON
     try {
 
         userData =
@@ -3218,88 +3217,114 @@ function handleQRScan(
 
     catch (error) {
 
-        scanResult.innerHTML = `
-            <p>
-                ❌ This is not a valid OVC QR code.
-            </p>
-        `;
+        console.error(
+            "❌ QR is not valid JSON:",
+            error
+        );
+
+        const result =
+            document.getElementById(
+                "scan-result"
+            );
+
+        if (result) {
+
+            result.innerHTML = `
+                <p>
+                    ❌ Invalid QR code
+                </p>
+
+                <small>
+                    This QR code is not an OVC profile.
+                </small>
+            `;
+
+        }
 
         return;
 
     }
 
 
-    // Validate OVC QR
+    console.log(
+        "📦 Decoded OVC data:",
+        userData
+    );
+
+
+    // Check QR type
     if (
         userData.type !==
         "OVC_USER"
     ) {
 
-        scanResult.innerHTML = `
-            <p>
-                ❌ This QR code does not belong to OVC.
-            </p>
-        `;
+        console.error(
+            "❌ Not an OVC user QR"
+        );
+
+        showToast(
+            "❌",
+            "This is not an OVC QR code."
+        );
 
         return;
 
     }
 
 
-    // Stop scanner
-    stopQRScanner();
+    // Check required fields
+    if (
+        !userData.id ||
+        !userData.username
+    ) {
 
-
-    // Show scanned user
-    scanResult.innerHTML = `
-
-        <div class="scanned-user">
-
-            <div class="scanned-avatar">
-                ${userData.avatar || "👤"}
-            </div>
-
-            <h3>
-                ${escapeHTML(
-                    userData.username
-                )}
-            </h3>
-
-            <p>
-                OVC User
-            </p>
-
-            <button
-                id="add-scanned-user"
-                class="primary-button"
-            >
-                ➕ Add Connection
-            </button>
-
-        </div>
-
-    `;
-
-
-    document
-        .getElementById(
-            "add-scanned-user"
-        )
-        .addEventListener(
-            "click",
-            function () {
-
-                addPerson(
-                    userData
-                );
-
-                closeQRScanner();
-
-            }
+        console.error(
+            "❌ Invalid OVC user data"
         );
 
-}
+        showToast(
+            "❌",
+            "Invalid OVC profile."
+        );
 
+        return;
+
+    }
+
+
+    // Prevent scanning yourself
+    if (
+        currentUser &&
+        userData.id ===
+        currentUser.id
+    ) {
+
+        showToast(
+            "😅",
+            "That's your own QR code!"
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "✅ Valid OVC user:",
+        userData.username
+    );
+
+
+    // Stop scanner
+    closeQRScanner();
+
+
+    // Add user
+    addPerson(
+        userData
+    );
+
+}
 
 function stopQRScanner() {
 
