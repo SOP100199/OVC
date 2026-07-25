@@ -644,7 +644,7 @@ function generateUserQR() {
     // Clear previous QR
     qrCode.innerHTML = "";
 
-    // Keep QR data small
+    // MINIMAL QR DATA
     const qrData = {
         type: "OVC_USER",
         id: currentUser.id,
@@ -655,7 +655,6 @@ function generateUserQR() {
 
     console.log("Generating QR:", qrText);
 
-    // Check QR library
     if (typeof QRCode === "undefined") {
 
         console.error("QRCode library not found!");
@@ -672,19 +671,12 @@ function generateUserQR() {
     try {
 
         new QRCode(qrCode, {
-
             text: qrText,
-
             width: 220,
-
             height: 220,
-
             colorDark: "#000000",
-
             colorLight: "#ffffff",
-
-            correctLevel: QRCode.CorrectLevel.M
-
+            correctLevel: QRCode.CorrectLevel.L
         });
 
         console.log("✅ QR generated successfully");
@@ -703,8 +695,8 @@ function generateUserQR() {
         `;
 
     }
-
 }
+
 /* =====================================================
    QR SHARE
 ===================================================== */
