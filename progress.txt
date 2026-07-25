@@ -1,0 +1,42 @@
+OVC — Work to Complete
+v0.1 — Static PWA
+✅ Login & profile
+✅ Emoji avatars
+✅ GIF status system
+✅ Funny bot messages
+✅ Responsive UI
+✅ LocalStorage
+✅ PWA installation
+✅ Offline caching
+⬜ Final cache update system
+v0.2 — UI & QR
+⬜ Responsive navbar
+⬜ Home
+⬜ People
+⬜ My QR
+⬜ Settings
+⬜ Profile
+⬜ Generate & share QR
+⬜ Scan QR
+v0.3 — Video Calling
+⬜ WebRTC setup
+⬜ Camera & microphone
+⬜ 1-to-1 video call
+⬜ Mute / camera controls
+⬜ End call
+⬜ QR-based direct connection
+v0.4 — LAN Mode
+⬜ server.js
+⬜ LAN user discovery
+⬜ Online/offline status
+⬜ Call signaling
+⬜ LAN video calling
+v0.5 — Advanced
+⬜ Call history
+⬜ OVC rooms
+⬜ Group video calls
+⬜ Security
+⬜ 24/7 local server deployment
+Immediate next task
+
+Navbar → Profile → Settings → My QR → QR scanning.
