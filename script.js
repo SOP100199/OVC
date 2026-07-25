@@ -58,7 +58,7 @@ const scanQrTab = document.getElementById("scan-qr-tab");
 const myQrPanel = document.getElementById("my-qr-panel");
 const scanQrPanel = document.getElementById("scan-qr-panel");
 
-const startScan = document.getElementById("start-scan");
+const startScan = document.getElementById("open-scanner");
 
 const shareQr = document.getElementById("share-qr");
 const downloadQr = document.getElementById("download-qr");

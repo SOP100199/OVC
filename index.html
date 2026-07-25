@@ -322,68 +322,70 @@
              PEOPLE
         ============================================== -->
 
-        <section
-            id="people-section"
-            class="page-section"
+   <section
+    id="people-section"
+    class="page-section"
+>
+
+    <div class="section-header">
+
+        <h1>
+            People 👥
+        </h1>
+
+        <p>
+            Your OVC connections.
+        </p>
+
+    </div>
+
+
+    <div
+        class="connection-status"
+        id="connection-status"
+    >
+
+        📡 OVC Ready
+
+    </div>
+
+
+    <div
+        id="people-list"
+        class="people-list"
+    >
+
+        <div
+            class="empty-state"
+            id="empty-people"
         >
 
-            <div class="section-header">
-
-                <h1>
-                    People Nearby 👥
-                </h1>
-
-                <p>
-                    People available to connect with you.
-                </p>
-
+            <div class="empty-icon">
+                👥
             </div>
 
+            <h2>
+                No connections yet
+            </h2>
 
-            <!-- Connection Status -->
+            <p>
+                Scan someone's OVC QR code
+                to connect with them.
+            </p>
 
-            <div
-                class="connection-status"
-                id="connection-status"
+            <button
+                class="primary-button"
+                type="button"
+                data-section="qr-section"
             >
+                📱 Go to QR Scanner
+            </button>
 
-                📡 Looking for OVC users...
+        </div>
 
-            </div>
+    </div>
 
-
-            <!-- People List -->
-
-            <div
-                id="people-list"
-                class="people-list"
-            >
-
-                <!-- Users will be added dynamically -->
-
-                <div
-                    class="empty-state"
-                    id="empty-people"
-                >
-
-                    <div class="empty-icon">
-                        👀
-                    </div>
-
-                    <h2>
-                        No users found
-                    </h2>
-
-                    <p>
-                        Ask your friend to open OVC and connect to the same network.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
+</section>
 
 <!-- =============================================
      QR SECTION
