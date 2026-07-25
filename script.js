@@ -1,386 +1,302 @@
 /* =====================================================
-   OVC - OFFLINE VIDEO COMMUNICATION
-   CLIENT
-   VERSION 1.0
+   OVC OFFLINE
+   SERVERLESS LAN VIDEO COMMUNICATION
 ===================================================== */
 
 
 /* =====================================================
-   CONFIGURATION
+   CONFIG
 ===================================================== */
 
-const OVC_VERSION = "1.0.0";
+const STORAGE_KEY =
+    "ovc-offline-user";
 
-const STORAGE_KEY = "ovc-user";
+const PEOPLE_KEY =
+    "ovc-offline-people";
 
-const SETTINGS_KEY = "ovc-settings";
-
-const PEOPLE_STORAGE_KEY = "ovc-people";
-
-const SIGNALING_SERVER =
-    "https://ovc-signaling.onrender.com";
-
-
-/* =====================================================
-   WEBRTC CONFIGURATION
-===================================================== */
-
-const rtcConfiguration = {
-
-    iceServers: [
-
-        {
-            urls:
-                "stun:stun.l.google.com:19302"
-        }
-
-    ]
-
-};
+const SETTINGS_KEY =
+    "ovc-offline-settings";
 
 
 /* =====================================================
    DOM
 ===================================================== */
 
-const nameInput =
-    document.getElementById("username");
+const $ = id =>
+    document.getElementById(id);
 
-const genderInput =
-    document.getElementById("gender");
 
-const send =
-    document.getElementById("send");
+/* Login */
 
 const loginSection =
-    document.getElementById("login-section");
+    $("login-section");
 
 const mainContent =
-    document.getElementById("main-content");
+    $("main-content");
 
+const nameInput =
+    $("username");
 
-/* Navigation */
+const genderInput =
+    $("gender");
 
-const navProfile =
-    document.getElementById("nav-profile");
-
-const navItems =
-    document.querySelectorAll(".nav-item");
-
-const bottomNavItems =
-    document.querySelectorAll(".bottom-nav-item");
-
-const sections =
-    document.querySelectorAll(".page-section");
+const sendButton =
+    $("send");
 
 
 /* Profile */
 
 const homeUsername =
-    document.getElementById("home-username");
+    $("home-username");
 
 const profileUsername =
-    document.getElementById("profile-username");
+    $("profile-username");
 
 const qrUsername =
-    document.getElementById("qr-username");
+    $("qr-username");
 
 const homeAvatar =
-    document.getElementById("home-avatar");
+    $("home-avatar");
 
 const profileAvatar =
-    document.getElementById("profile-avatar");
+    $("profile-avatar");
+
+
+/* Navigation */
+
+const sections =
+    document.querySelectorAll(
+        ".page-section"
+    );
+
+const navItems =
+    document.querySelectorAll(
+        ".bottom-nav-item"
+    );
+
+const navProfile =
+    $("nav-profile");
 
 
 /* QR */
 
 const qrCode =
-    document.getElementById("qr-code");
+    $("qr-code");
 
 const myQrTab =
-    document.getElementById("my-qr-tab");
+    $("my-qr-tab");
 
 const scanQrTab =
-    document.getElementById("scan-qr-tab");
+    $("scan-qr-tab");
 
 const myQrPanel =
-    document.getElementById("my-qr-panel");
+    $("my-qr-panel");
 
 const scanQrPanel =
-    document.getElementById("scan-qr-panel");
+    $("scan-qr-panel");
 
 const openScannerButton =
-    document.getElementById("open-scanner");
-
-const closeScannerButton =
-    document.getElementById("close-scanner");
-
-const cancelScannerButton =
-    document.getElementById("cancel-scanner");
+    $("open-scanner");
 
 const qrScannerPanel =
-    document.getElementById("qr-scanner-panel");
+    $("qr-scanner-panel");
+
+const closeScannerButton =
+    $("close-scanner");
+
+const cancelScannerButton =
+    $("cancel-scanner");
 
 const qrReader =
-    document.getElementById("qr-reader");
-
-const scanResult =
-    document.getElementById("scan-result");
-
-const shareQr =
-    document.getElementById("share-qr");
-
-const downloadQr =
-    document.getElementById("download-qr");
+    $("qr-reader");
 
 
 /* People */
 
 const peopleList =
-    document.getElementById("people-list");
+    $("people-list");
 
 const emptyPeople =
-    document.getElementById("empty-people");
+    $("empty-people");
 
 
 /* Video */
 
 const videoSection =
-    document.getElementById("video-section");
+    $("video-section");
 
 const localVideo =
-    document.getElementById("local-video");
+    $("local-video");
 
 const remoteVideo =
-    document.getElementById("remote-video");
+    $("remote-video");
 
 const localPlaceholder =
-    document.getElementById("local-placeholder");
+    $("local-placeholder");
 
 const remotePlaceholder =
-    document.getElementById("remote-placeholder");
+    $("remote-placeholder");
 
 const remoteUsername =
-    document.getElementById("remote-username");
+    $("remote-username");
 
 const callStatus =
-    document.getElementById("call-status");
+    $("call-status");
 
 const callTimer =
-    document.getElementById("call-timer");
+    $("call-timer");
 
 const muteButton =
-    document.getElementById("mute-button");
+    $("mute-button");
 
 const cameraButton =
-    document.getElementById("camera-button");
+    $("camera-button");
 
 const endCallButton =
-    document.getElementById("end-call-button");
+    $("end-call-button");
 
 const fullscreenButton =
-    document.getElementById("fullscreen-button");
+    $("fullscreen-button");
 
 
-/* Connection */
+/* Signal */
 
-const connectionModal =
-    document.getElementById("connection-modal");
+const signalModal =
+    $("signal-modal");
 
-const connectionUserName =
-    document.getElementById("connection-user-name");
+const signalTitle =
+    $("signal-title");
 
-const connectionUserAvatar =
-    document.getElementById("connection-user-avatar");
+const signalDescription =
+    $("signal-description");
 
-const acceptConnection =
-    document.getElementById("accept-connection");
+const signalQr =
+    $("signal-qr");
 
-const rejectConnection =
-    document.getElementById("reject-connection");
+const signalInput =
+    $("signal-input");
 
-const closeConnectionModal =
-    document.getElementById("close-connection-modal");
+const signalScanButton =
+    $("signal-scan-button");
 
+const signalSubmitButton =
+    $("signal-submit-button");
 
-/* Incoming Call */
-
-const incomingCallModal =
-    document.getElementById("incoming-call-modal");
-
-const callerName =
-    document.getElementById("caller-name");
-
-const acceptCall =
-    document.getElementById("accept-call");
-
-const rejectCall =
-    document.getElementById("reject-call");
-
-
-/* Settings */
-
-const vibrationToggle =
-    document.getElementById("vibration-toggle");
-
-const notificationToggle =
-    document.getElementById("notification-toggle");
-
-const gifToggle =
-    document.getElementById("gif-toggle");
-
-const clearData =
-    document.getElementById("clear-data");
-
-const editProfile =
-    document.getElementById("edit-profile");
+const signalCloseButton =
+    $("signal-close-button");
 
 
 /* Toast */
 
 const toast =
-    document.getElementById("toast");
+    $("toast");
 
 const toastIcon =
-    document.getElementById("toast-icon");
+    $("toast-icon");
 
 const toastMessage =
-    document.getElementById("toast-message");
-
-
-/* Install */
-
-const installPrompt =
-    document.getElementById("install-prompt");
-
-const installButton =
-    document.getElementById("install-button");
-
-const closeInstall =
-    document.getElementById("close-install");
+    $("toast-message");
 
 
 /* =====================================================
-   APPLICATION STATE
+   STATE
 ===================================================== */
 
-let currentUser = null;
+let currentUser =
+    null;
 
-let currentSettings = {
+let people =
+    [];
 
-    vibration: true,
+let localStream =
+    null;
 
-    notifications: true,
+let remoteStream =
+    null;
 
-    gifs: true
+let peerConnection =
+    null;
+
+let currentRemoteUser =
+    null;
+
+let qrScanner =
+    null;
+
+let signalScanner =
+    null;
+
+let signalMode =
+    null;
+
+let callTimerInterval =
+    null;
+
+let callStartTime =
+    null;
+
+let isMuted =
+    false;
+
+let isCameraOff =
+    false;
+
+
+/* =====================================================
+   WEBRTC
+===================================================== */
+
+/*
+   IMPORTANT:
+
+   No STUN server.
+
+   This means:
+
+   WebRTC is intended for
+   same-LAN communication.
+
+   No Internet is required.
+*/
+
+const rtcConfiguration = {
+
+    iceServers: []
 
 };
 
 
-let people = [];
-
-let qrScanner = null;
-
-let socket = null;
-
-let localStream = null;
-
-let remoteStream = null;
-
-let peerConnection = null;
-
-let currentConnectionUser = null;
-
-let pendingCallUser = null;
-
-let activeCallUser = null;
-
-let isMuted = false;
-
-let isCameraOff = false;
-
-let callStartTime = null;
-
-let callTimerInterval = null;
-
-let deferredInstallPrompt = null;
-
-
 /* =====================================================
-   AVATARS
-===================================================== */
-
-const maleAvatars = [
-
-    "🧑‍🎄",
-    "🕵️‍♂️",
-    "💂‍♂️",
-    "🥷",
-    "👨‍🎓",
-    "🧑‍🚀",
-    "🧙‍♂️"
-
-];
-
-
-const femaleAvatars = [
-
-    "👩‍🎄",
-    "🕵️‍♀️",
-    "💂‍♀️",
-    "🥷",
-    "👩‍🎓",
-    "🧑‍🚀",
-    "🧙‍♀️"
-
-];
-
-
-/* =====================================================
-   INITIALIZATION
+   INITIALIZE
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    initializeOVC
+    initialize
 );
 
 
-function initializeOVC() {
+function initialize() {
 
-    console.log(
-        `OVC v${OVC_VERSION} initializing...`
-    );
-
-    loadSettings();
+    loadUser();
 
     loadPeople();
 
-    loadStoredUser();
+    setupLogin();
 
     setupNavigation();
 
-    setupLogin();
+    setupQR();
 
-    setupQRInterface();
+    setupPeople();
 
     setupCallControls();
 
-    setupConnectionControls();
+    setupSignalControls();
 
-    setupIncomingCallControls();
+    setupProfile();
 
-    setupSettings();
-
-    setupInstallPrompt();
-
-    setupSocket();
-
-    setupServiceWorker();
-
-    console.log(
-        "OVC initialization complete."
-    );
+    registerServiceWorker();
 
 }
 
@@ -391,48 +307,22 @@ function initializeOVC() {
 
 function setupLogin() {
 
-    if (send) {
-
-        send.addEventListener(
-            "click",
-            loginUser
-        );
-
+    if (!sendButton) {
+        return;
     }
 
-
-    if (nameInput) {
-
-        nameInput.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    loginUser();
-
-                }
-
-            }
-        );
-
-    }
+    sendButton.addEventListener(
+        "click",
+        login
+    );
 
 }
 
 
-function loginUser() {
-
-    if (!nameInput) {
-        return;
-    }
-
+function login() {
 
     const username =
         nameInput.value.trim();
-
 
     if (!username) {
 
@@ -445,99 +335,35 @@ function loginUser() {
 
     }
 
-
-    const gender =
-        genderInput
-            ? genderInput.value
-            : "male";
-
-
     currentUser = {
 
         id:
-            generateUserId(),
+            "ovc-" +
+            Date.now().toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2, 8),
 
         username,
 
-        gender,
+        gender:
+            genderInput.value,
 
         avatar:
-            generateAvatar(
-                gender
-            ),
+            genderInput.value === "female"
+                ? "👩‍🎓"
+                : "👨‍🎓",
 
         createdAt:
-            Date.now(),
-
-        version:
-            OVC_VERSION
+            Date.now()
 
     };
 
 
     saveUser();
 
-    updateUserInterface();
-
-    loginSection.classList.add(
-        "hidden"
-    );
-
-    mainContent.classList.remove(
-        "hidden"
-    );
-
-
-    registerUserWithServer();
-
-
-    showToast(
-        "🎉",
-        `Welcome ${username}!`
-    );
-
-}
-
-
-function generateUserId() {
-
-    return (
-
-        "ovc-" +
-
-        Date.now()
-            .toString(36) +
-
-        "-" +
-
-        Math.random()
-            .toString(36)
-            .substring(
-                2,
-                10
-            )
-
-    );
-
-}
-
-
-function generateAvatar(
-    gender
-) {
-
-    const avatars =
-        gender === "female"
-            ? femaleAvatars
-            : maleAvatars;
-
-
-    return avatars[
-        Math.floor(
-            Math.random() *
-            avatars.length
-        )
-    ];
+    showApplication();
 
 }
 
@@ -547,11 +373,6 @@ function generateAvatar(
 ===================================================== */
 
 function saveUser() {
-
-    if (!currentUser) {
-        return;
-    }
-
 
     localStorage.setItem(
 
@@ -566,28 +387,23 @@ function saveUser() {
 }
 
 
-function loadStoredUser() {
+function loadUser() {
 
     try {
 
-        const storedUser =
+        const data =
             localStorage.getItem(
                 STORAGE_KEY
             );
 
-
-        if (!storedUser) {
-
+        if (!data) {
             return;
-
         }
-
 
         currentUser =
             JSON.parse(
-                storedUser
+                data
             );
-
 
         if (
             !currentUser ||
@@ -601,39 +417,13 @@ function loadStoredUser() {
 
         }
 
-
-        updateUserInterface();
-
-
-        if (loginSection) {
-
-            loginSection.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        if (mainContent) {
-
-            mainContent.classList.remove(
-                "hidden"
-            );
-
-        }
-
-
-        setTimeout(
-            registerUserWithServer,
-            500
-        );
+        showApplication();
 
     }
 
     catch (error) {
 
         console.error(
-            "OVC user loading error:",
             error
         );
 
@@ -641,10 +431,24 @@ function loadStoredUser() {
             STORAGE_KEY
         );
 
-        currentUser =
-            null;
-
     }
+
+}
+
+
+function showApplication() {
+
+    loginSection.classList.add(
+        "hidden"
+    );
+
+    mainContent.classList.remove(
+        "hidden"
+    );
+
+    updateUserUI();
+
+    generateUserQR();
 
 }
 
@@ -653,271 +457,273 @@ function loadStoredUser() {
    USER UI
 ===================================================== */
 
-function updateUserInterface() {
+function updateUserUI() {
 
     if (!currentUser) {
         return;
     }
 
+    homeUsername.textContent =
+        currentUser.username;
 
-    if (homeUsername) {
+    profileUsername.textContent =
+        currentUser.username;
 
-        homeUsername.textContent =
-            currentUser.username;
+    qrUsername.textContent =
+        currentUser.username;
 
-    }
+    homeAvatar.textContent =
+        currentUser.avatar;
 
-
-    if (profileUsername) {
-
-        profileUsername.textContent =
-            currentUser.username;
-
-    }
-
-
-    if (qrUsername) {
-
-        qrUsername.textContent =
-            currentUser.username;
-
-    }
-
-
-    if (homeAvatar) {
-
-        homeAvatar.textContent =
-            currentUser.avatar;
-
-    }
-
-
-    if (profileAvatar) {
-
-        profileAvatar.textContent =
-            currentUser.avatar;
-
-    }
-
-
-    generateUserQR();
+    profileAvatar.textContent =
+        currentUser.avatar;
 
 }
 
 
 /* =====================================================
-   QR GENERATION
+   NAVIGATION
+===================================================== */
+
+function setupNavigation() {
+
+    navItems.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    navigateTo(
+                        button.dataset.section
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    navProfile.addEventListener(
+        "click",
+        () => {
+
+            navigateTo(
+                "profile-section"
+            );
+
+        }
+    );
+
+}
+
+
+function navigateTo(
+    sectionId
+) {
+
+    sections.forEach(
+        section => {
+
+            section.classList.remove(
+                "active-section"
+            );
+
+        }
+    );
+
+
+    const section =
+        $(sectionId);
+
+    if (!section) {
+        return;
+    }
+
+
+    section.classList.add(
+        "active-section"
+    );
+
+
+    navItems.forEach(
+        button => {
+
+            button.classList.toggle(
+
+                "active",
+
+                button.dataset.section ===
+                sectionId
+
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   QR IDENTITY
 ===================================================== */
 
 function generateUserQR() {
 
     if (
+        !currentUser ||
         !qrCode ||
-        !currentUser
-    ) {
-
-        return;
-
-    }
-
-
-    qrCode.innerHTML = "";
-
-
-    /*
-       IMPORTANT:
-
-       Keep QR payload short.
-
-       Do NOT put username,
-       avatar and other data
-       into QR.
-
-       This prevents:
-       code length overflow.
-    */
-
-    const qrText =
-        `OVC:${currentUser.id}`;
-
-
-    console.log(
-        "Generating compact QR:",
-        qrText
-    );
-
-
-    if (
         typeof QRCode ===
         "undefined"
     ) {
 
-        console.error(
-            "QRCode library not loaded."
-        );
-
         return;
 
     }
 
 
-    try {
+    qrCode.innerHTML =
+        "";
 
-        new QRCode(
-            qrCode,
-            {
 
-                text:
-                    qrText,
+    const data = {
 
-                width:
-                    220,
+        type:
+            "OVC_USER",
 
-                height:
-                    220,
+        id:
+            currentUser.id,
 
-                correctLevel:
-                    QRCode.CorrectLevel.M
+        username:
+            currentUser.username,
 
-            }
+        avatar:
+            currentUser.avatar
+
+    };
+
+
+    /*
+       Keep QR data small.
+
+       This avoids:
+
+       "code length overflow"
+    */
+
+    const text =
+        JSON.stringify(
+            data
         );
 
-    }
 
-    catch (error) {
+    new QRCode(
 
-        console.error(
-            "QR generation error:",
-            error
-        );
+        qrCode,
 
-    }
+        {
+
+            text,
+
+            width:
+                200,
+
+            height:
+                200,
+
+            correctLevel:
+                QRCode.CorrectLevel.L
+
+        }
+
+    );
 
 }
 
 
 /* =====================================================
-   QR INTERFACE
+   QR TABS
 ===================================================== */
 
-function setupQRInterface() {
+function setupQR() {
 
-    if (myQrTab) {
+    myQrTab.addEventListener(
+        "click",
+        () => {
 
-        myQrTab.addEventListener(
-            "click",
-            () => {
+            myQrTab.classList.add(
+                "active"
+            );
 
-                myQrTab.classList.add(
-                    "active"
-                );
+            scanQrTab.classList.remove(
+                "active"
+            );
 
-                scanQrTab.classList.remove(
-                    "active"
-                );
+            myQrPanel.classList.add(
+                "active"
+            );
 
-                myQrPanel.classList.add(
-                    "active"
-                );
+            scanQrPanel.classList.remove(
+                "active"
+            );
 
-                scanQrPanel.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-    }
+        }
+    );
 
 
-    if (scanQrTab) {
+    scanQrTab.addEventListener(
+        "click",
+        () => {
 
-        scanQrTab.addEventListener(
-            "click",
-            () => {
+            scanQrTab.classList.add(
+                "active"
+            );
 
-                scanQrTab.classList.add(
-                    "active"
-                );
+            myQrTab.classList.remove(
+                "active"
+            );
 
-                myQrTab.classList.remove(
-                    "active"
-                );
+            scanQrPanel.classList.add(
+                "active"
+            );
 
-                scanQrPanel.classList.add(
-                    "active"
-                );
+            myQrPanel.classList.remove(
+                "active"
+            );
 
-                myQrPanel.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-    }
+        }
+    );
 
 
-    if (openScannerButton) {
-
-        openScannerButton.addEventListener(
-            "click",
-            openQRScanner
-        );
-
-    }
+    openScannerButton.addEventListener(
+        "click",
+        startIdentityScanner
+    );
 
 
-    if (closeScannerButton) {
-
-        closeScannerButton.addEventListener(
-            "click",
-            closeQRScanner
-        );
-
-    }
+    closeScannerButton.addEventListener(
+        "click",
+        stopIdentityScanner
+    );
 
 
-    if (cancelScannerButton) {
-
-        cancelScannerButton.addEventListener(
-            "click",
-            closeQRScanner
-        );
-
-    }
-
-
-    if (shareQr) {
-
-        shareQr.addEventListener(
-            "click",
-            shareUserQR
-        );
-
-    }
-
-
-    if (downloadQr) {
-
-        downloadQr.addEventListener(
-            "click",
-            downloadUserQR
-        );
-
-    }
+    cancelScannerButton.addEventListener(
+        "click",
+        stopIdentityScanner
+    );
 
 }
 
 
 /* =====================================================
-   OPEN QR SCANNER
+   IDENTITY QR SCANNER
 ===================================================== */
 
-async function openQRScanner() {
+async function startIdentityScanner() {
 
     console.log(
-        "📷 Start scanner clicked"
+        "Starting identity QR scanner..."
     );
 
 
@@ -926,34 +732,10 @@ async function openQRScanner() {
         "undefined"
     ) {
 
-        console.error(
-            "Html5Qrcode library unavailable."
-        );
-
         showToast(
             "❌",
-            "QR scanner library not loaded."
+            "QR scanner library unavailable."
         );
-
-        return;
-
-    }
-
-
-    if (!qrReader) {
-
-        console.error(
-            "#qr-reader not found."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        qrScanner
-    ) {
 
         return;
 
@@ -965,14 +747,6 @@ async function openQRScanner() {
     );
 
 
-    qrScannerPanel.style.display =
-        "flex";
-
-
-    scanResult.textContent =
-        "Starting camera...";
-
-
     try {
 
         qrScanner =
@@ -981,48 +755,12 @@ async function openQRScanner() {
             );
 
 
-        const cameras =
-            await Html5Qrcode
-                .getCameras();
-
-
-        if (
-            !cameras ||
-            cameras.length === 0
-        ) {
-
-            throw new Error(
-                "No camera found."
-            );
-
-        }
-
-
-        let cameraId =
-            cameras[0].id;
-
-
-        const backCamera =
-            cameras.find(
-                camera =>
-                    /back|rear|environment/i
-                        .test(
-                            camera.label
-                        )
-            );
-
-
-        if (backCamera) {
-
-            cameraId =
-                backCamera.id;
-
-        }
-
-
         await qrScanner.start(
 
-            cameraId,
+            {
+                facingMode:
+                    "environment"
+            },
 
             {
 
@@ -1030,40 +768,29 @@ async function openQRScanner() {
                     10,
 
                 qrbox:
-                    {
-                        width:
-                            250,
-
-                        height:
-                            250
-                    }
+                    250
 
             },
 
             decodedText => {
 
-                handleQRScan(
+                console.log(
+                    "QR detected:",
+                    decodedText
+                );
+
+
+                stopIdentityScanner();
+
+
+                handleIdentityQR(
                     decodedText
                 );
 
             },
 
-            () => {
+            () => {}
 
-                // Normal:
-                // QR not detected yet.
-
-            }
-
-        );
-
-
-        scanResult.textContent =
-            "Point your camera at an OVC QR code.";
-
-
-        console.log(
-            "✅ QR camera started."
         );
 
     }
@@ -1071,191 +798,25 @@ async function openQRScanner() {
     catch (error) {
 
         console.error(
-            "❌ QR scanner error:",
+            "Camera error:",
             error
         );
 
-
-        scanResult.textContent =
-            "Unable to access camera.";
-
-
         showToast(
             "❌",
-            "Could not open camera."
+            "Could not start camera."
         );
 
-
-        qrScanner =
-            null;
+        qrScannerPanel.classList.add(
+            "hidden"
+        );
 
     }
 
 }
 
 
-/* =====================================================
-   QR SCAN
-===================================================== */
-
-async function handleQRScan(
-    decodedText
-) {
-
-    console.log(
-        "📦 QR data:",
-        decodedText
-    );
-
-
-    if (
-        !decodedText.startsWith(
-            "OVC:"
-        )
-    ) {
-
-        showToast(
-            "❌",
-            "This is not an OVC QR code."
-        );
-
-        return;
-
-    }
-
-
-    const userId =
-        decodedText.substring(
-            4
-        );
-
-
-    if (!userId) {
-
-        showToast(
-            "❌",
-            "Invalid OVC QR code."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        currentUser &&
-        userId ===
-        currentUser.id
-    ) {
-
-        showToast(
-            "😅",
-            "That's your own QR code."
-        );
-
-        return;
-
-    }
-
-
-    console.log(
-        "🔍 Looking up OVC user:",
-        userId
-    );
-
-
-    if (
-        !socket ||
-        !socket.connected
-    ) {
-
-        showToast(
-            "❌",
-            "Not connected to OVC server."
-        );
-
-        return;
-
-    }
-
-
-    scanResult.textContent =
-        "Finding OVC user...";
-
-
-    socket.emit(
-
-        "find-user",
-
-        userId,
-
-        async user => {
-
-            if (!user) {
-
-                showToast(
-                    "❌",
-                    "User is currently offline."
-                );
-
-                return;
-
-            }
-
-
-            console.log(
-                "✅ User found:",
-                user
-            );
-
-
-            await closeQRScanner();
-
-
-            currentConnectionUser = {
-
-                id:
-                    user.id,
-
-                username:
-                    user.username,
-
-                avatar:
-                    user.avatar || "👤"
-
-            };
-
-
-            showConnectionRequest(
-                currentConnectionUser
-            );
-
-
-            socket.emit(
-                "connection-request",
-                {
-
-                    to:
-                        user.id,
-
-                    from:
-                        currentUser
-
-                }
-            );
-
-        }
-
-    );
-
-}
-
-
-/* =====================================================
-   CLOSE QR SCANNER
-===================================================== */
-
-async function closeQRScanner() {
+async function stopIdentityScanner() {
 
     if (qrScanner) {
 
@@ -1270,7 +831,6 @@ async function closeQRScanner() {
         catch (error) {
 
             console.warn(
-                "QR scanner close:",
                 error
             );
 
@@ -1282,535 +842,84 @@ async function closeQRScanner() {
     }
 
 
-    if (qrScannerPanel) {
-
-        qrScannerPanel.classList.add(
-            "hidden"
-        );
-
-        qrScannerPanel.style.display =
-            "none";
-
-    }
+    qrScannerPanel.classList.add(
+        "hidden"
+    );
 
 }
 
 
 /* =====================================================
-   SHARE QR
+   IDENTITY QR PROCESS
 ===================================================== */
 
-async function shareUserQR() {
+function handleIdentityQR(
+    text
+) {
 
-    const canvas =
-        qrCode
-            ?.querySelector(
-                "canvas"
-            );
-
-
-    if (!canvas) {
-
-        showToast(
-            "⚠️",
-            "QR code is not ready."
-        );
-
-        return;
-
-    }
-
+    let user;
 
     try {
 
-        const blob =
-            await new Promise(
-                resolve =>
-                    canvas.toBlob(
-                        resolve,
-                        "image/png"
-                    )
+        user =
+            JSON.parse(
+                text
             );
-
-
-        const file =
-            new File(
-
-                [blob],
-
-                "OVC-QR.png",
-
-                {
-                    type:
-                        "image/png"
-                }
-
-            );
-
-
-        if (
-            navigator.share &&
-            navigator.canShare &&
-            navigator.canShare(
-                {
-                    files:
-                        [file]
-                }
-            )
-        ) {
-
-            await navigator.share(
-                {
-
-                    title:
-                        "OVC QR",
-
-                    text:
-                        "Connect with me on OVC.",
-
-                    files:
-                        [file]
-
-                }
-            );
-
-        }
-
-        else {
-
-            showToast(
-                "ℹ️",
-                "Sharing is not supported."
-            );
-
-        }
 
     }
 
-    catch (error) {
+    catch {
 
-        if (
-            error.name !==
-            "AbortError"
-        ) {
-
-            console.error(
-                error
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =====================================================
-   DOWNLOAD QR
-===================================================== */
-
-function downloadUserQR() {
-
-    const canvas =
-        qrCode
-            ?.querySelector(
-                "canvas"
-            );
-
-
-    if (!canvas) {
+        showToast(
+            "❌",
+            "Invalid OVC QR."
+        );
 
         return;
 
     }
 
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.download =
-        "OVC-QR.png";
-
-
-    link.href =
-        canvas.toDataURL(
-            "image/png"
-        );
-
-
-    link.click();
-
-}
-
-
-/* =====================================================
-   SOCKET.IO
-===================================================== */
-
-function setupSocket() {
 
     if (
-        typeof io ===
-        "undefined"
+        user.type !==
+        "OVC_USER"
     ) {
 
-        console.error(
-            "Socket.IO client not loaded."
+        showToast(
+            "❌",
+            "Not an OVC QR."
         );
 
         return;
 
     }
 
-
-    socket =
-        io(
-            SIGNALING_SERVER,
-            {
-
-                transports:
-                    [
-                        "websocket",
-                        "polling"
-                    ],
-
-                reconnection:
-                    true
-
-            }
-        );
-
-
-    socket.on(
-        "connect",
-        () => {
-
-            console.log(
-                "🟢 Connected to OVC signaling server:",
-                socket.id
-            );
-
-
-            updateConnectionStatus(
-                true
-            );
-
-
-            registerUserWithServer();
-
-        }
-    );
-
-
-    socket.on(
-        "disconnect",
-        () => {
-
-            console.log(
-                "🔴 Disconnected from signaling server."
-            );
-
-
-            updateConnectionStatus(
-                false
-            );
-
-        }
-    );
-
-
-    socket.on(
-        "connect_error",
-        error => {
-
-            console.error(
-                "❌ Socket connection error:",
-                error
-            );
-
-        }
-    );
-
-
-    socket.on(
-        "connection-request",
-        data => {
-
-            console.log(
-                "📥 Connection request:",
-                data
-            );
-
-
-            if (
-                data &&
-                data.from
-            ) {
-
-                currentConnectionUser =
-                    data.from;
-
-
-                showConnectionRequest(
-                    data.from
-                );
-
-            }
-
-        }
-    );
-
-
-    socket.on(
-        "connection-response",
-        data => {
-
-            if (
-                data.accepted
-            ) {
-
-                addPerson(
-                    data.from
-                );
-
-
-                showToast(
-                    "✅",
-                    `${data.from.username} connected!`
-                );
-
-            }
-
-            else {
-
-                showToast(
-                    "❌",
-                    "Connection request rejected."
-                );
-
-            }
-
-        }
-    );
-
-
-    socket.on(
-        "user-offline",
-        () => {
-
-            showToast(
-                "🔴",
-                "User is offline."
-            );
-
-        }
-    );
-
-
-    setupWebRTCSignaling();
-
-}
-
-
-/* =====================================================
-   REGISTER USER
-===================================================== */
-
-function registerUserWithServer() {
 
     if (
-        !socket ||
-        !socket.connected ||
-        !currentUser
+        currentUser &&
+        user.id ===
+        currentUser.id
     ) {
 
-        return;
-
-    }
-
-
-    socket.emit(
-        "register-user",
-        currentUser
-    );
-
-
-    console.log(
-        "📡 Registered OVC user:",
-        currentUser.username
-    );
-
-}
-
-
-/* =====================================================
-   CONNECTION REQUEST UI
-===================================================== */
-
-function showConnectionRequest(
-    user
-) {
-
-    if (!connectionModal) {
-        return;
-    }
-
-
-    connectionUserName.textContent =
-        user.username;
-
-
-    connectionUserAvatar.textContent =
-        user.avatar || "👤";
-
-
-    connectionModal.classList.remove(
-        "hidden"
-    );
-
-
-    vibrate(
-        [100, 50, 100]
-    );
-
-}
-
-
-function setupConnectionControls() {
-
-    if (acceptConnection) {
-
-        acceptConnection.addEventListener(
-            "click",
-            acceptConnectionRequest
+        showToast(
+            "😅",
+            "This is your own QR."
         );
-
-    }
-
-
-    if (rejectConnection) {
-
-        rejectConnection.addEventListener(
-            "click",
-            rejectConnectionRequest
-        );
-
-    }
-
-
-    if (closeConnectionModal) {
-
-        closeConnectionModal.addEventListener(
-            "click",
-            () => {
-
-                connectionModal.classList.add(
-                    "hidden"
-                );
-
-            }
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   ACCEPT CONNECTION
-===================================================== */
-
-function acceptConnectionRequest() {
-
-    if (
-        !currentConnectionUser
-    ) {
 
         return;
 
     }
-
-
-    connectionModal.classList.add(
-        "hidden"
-    );
 
 
     addPerson(
-        currentConnectionUser
-    );
-
-
-    socket.emit(
-
-        "connection-response",
-
-        {
-
-            to:
-                currentConnectionUser.id,
-
-            from:
-                currentUser,
-
-            accepted:
-                true
-
-        }
-
+        user
     );
 
 
     showToast(
         "✅",
-        "Connection accepted."
+        `${user.username} added.`
     );
-
-}
-
-
-/* =====================================================
-   REJECT CONNECTION
-===================================================== */
-
-function rejectConnectionRequest() {
-
-    if (
-        currentConnectionUser
-    ) {
-
-        socket.emit(
-
-            "connection-response",
-
-            {
-
-                to:
-                    currentConnectionUser.id,
-
-                from:
-                    currentUser,
-
-                accepted:
-                    false
-
-            }
-
-        );
-
-    }
-
-
-    connectionModal.classList.add(
-        "hidden"
-    );
-
-
-    currentConnectionUser =
-        null;
 
 }
 
@@ -1819,30 +928,37 @@ function rejectConnectionRequest() {
    PEOPLE
 ===================================================== */
 
+function setupPeople() {
+
+    renderPeople();
+
+}
+
+
 function loadPeople() {
 
     try {
 
-        const saved =
+        const data =
             localStorage.getItem(
-                PEOPLE_STORAGE_KEY
+                PEOPLE_KEY
             );
 
-
-        if (saved) {
+        if (data) {
 
             people =
                 JSON.parse(
-                    saved
+                    data
                 );
 
         }
 
     }
 
-    catch (error) {
+    catch {
 
-        people = [];
+        people =
+            [];
 
     }
 
@@ -1856,7 +972,7 @@ function savePeople() {
 
     localStorage.setItem(
 
-        PEOPLE_STORAGE_KEY,
+        PEOPLE_KEY,
 
         JSON.stringify(
             people
@@ -1872,63 +988,31 @@ function addPerson(
 ) {
 
     if (
-        !user ||
-        !user.id
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        currentUser &&
-        user.id ===
-        currentUser.id
-    ) {
-
-        return;
-
-    }
-
-
-    const exists =
         people.some(
-            person =>
-                person.id ===
+            p =>
+                p.id ===
                 user.id
-        );
-
-
-    if (exists) {
+        )
+    ) {
 
         return;
 
     }
 
 
-    people.push(
+    people.push({
 
-        {
+        id:
+            user.id,
 
-            id:
-                user.id,
+        username:
+            user.username,
 
-            username:
-                user.username,
+        avatar:
+            user.avatar ||
+            "👤"
 
-            avatar:
-                user.avatar || "👤",
-
-            status:
-                "available",
-
-            addedAt:
-                Date.now()
-
-        }
-
-    );
+    });
 
 
     savePeople();
@@ -1940,43 +1024,25 @@ function addPerson(
 
 function renderPeople() {
 
-    if (!peopleList) {
-        return;
-    }
-
-
-    peopleList
-        .querySelectorAll(
-            ".person-card"
-        )
-        .forEach(
-            card =>
-                card.remove()
-        );
+    peopleList.innerHTML =
+        "";
 
 
     if (
-        people.length === 0
+        people.length ===
+        0
     ) {
 
-        if (emptyPeople) {
-
-            emptyPeople.style.display =
-                "flex";
-
-        }
+        emptyPeople.style.display =
+            "block";
 
         return;
 
     }
 
 
-    if (emptyPeople) {
-
-        emptyPeople.style.display =
-            "none";
-
-    }
+    emptyPeople.style.display =
+        "none";
 
 
     people.forEach(
@@ -1995,9 +1061,7 @@ function renderPeople() {
             card.innerHTML = `
 
                 <div class="person-avatar">
-                    ${escapeHTML(
-                        person.avatar
-                    )}
+                    ${person.avatar}
                 </div>
 
                 <div class="person-info">
@@ -2009,40 +1073,36 @@ function renderPeople() {
                     </h3>
 
                     <span>
-                        🟢 Available
+                        🟢 LAN User
                     </span>
 
                 </div>
 
-                <button
-                    class="call-person-button"
-                >
-                    📹
+                <button>
+                    📹 Call
                 </button>
 
             `;
 
 
-            peopleList.appendChild(
-                card
-            );
+            card
+                .querySelector(
+                    "button"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
 
+                        startOutgoingCall(
+                            person
+                        );
 
-            const callButton =
-                card.querySelector(
-                    ".call-person-button"
+                    }
                 );
 
 
-            callButton.addEventListener(
-                "click",
-                () => {
-
-                    startCall(
-                        person
-                    );
-
-                }
+            peopleList.appendChild(
+                card
             );
 
         }
@@ -2055,307 +1115,7 @@ function renderPeople() {
    WEBRTC
 ===================================================== */
 
-function setupWebRTCSignaling() {
-
-    socket.on(
-        "webrtc-offer",
-        async data => {
-
-            console.log(
-                "📥 WebRTC offer received."
-            );
-
-
-            pendingCallUser =
-                data.from;
-
-
-            showIncomingCall(
-                data.from
-            );
-
-
-            pendingOffer =
-                data.offer;
-
-        }
-    );
-
-
-    socket.on(
-        "webrtc-answer",
-        async data => {
-
-            if (
-                peerConnection
-            ) {
-
-                await peerConnection
-                    .setRemoteDescription(
-                        new RTCSessionDescription(
-                            data.answer
-                        )
-                    );
-
-            }
-
-        }
-    );
-
-
-    socket.on(
-        "ice-candidate",
-        async data => {
-
-            if (
-                peerConnection &&
-                data.candidate
-            ) {
-
-                try {
-
-                    await peerConnection
-                        .addIceCandidate(
-                            new RTCIceCandidate(
-                                data.candidate
-                            )
-                        );
-
-                }
-
-                catch (error) {
-
-                    console.error(
-                        "ICE error:",
-                        error
-                    );
-
-                }
-
-            }
-
-        }
-    );
-
-
-    socket.on(
-        "call-ended",
-        () => {
-
-            endCall(
-                false
-            );
-
-        }
-    );
-
-}
-
-
-let pendingOffer = null;
-
-
-/* =====================================================
-   START CALL
-===================================================== */
-
-async function startCall(
-    user
-) {
-
-    try {
-
-        activeCallUser =
-            user;
-
-
-        navigateTo(
-            "video-section"
-        );
-
-
-        callStatus.textContent =
-            "Opening camera...";
-
-
-        await startLocalMedia();
-
-
-        createPeerConnection(
-            user
-        );
-
-
-        const offer =
-            await peerConnection
-                .createOffer();
-
-
-        await peerConnection
-            .setLocalDescription(
-                offer
-            );
-
-
-        socket.emit(
-
-            "webrtc-offer",
-
-            {
-
-                to:
-                    user.id,
-
-                from:
-                    currentUser,
-
-                offer
-
-            }
-
-        );
-
-
-        callStatus.textContent =
-            "Calling...";
-
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Start call error:",
-            error
-        );
-
-
-        showToast(
-            "❌",
-            "Could not start video call."
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   ACCEPT CALL
-===================================================== */
-
-async function acceptIncomingCall() {
-
-    incomingCallModal.classList.add(
-        "hidden"
-    );
-
-
-    if (
-        !pendingCallUser ||
-        !pendingOffer
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-        activeCallUser =
-            pendingCallUser;
-
-
-        navigateTo(
-            "video-section"
-        );
-
-
-        await startLocalMedia();
-
-
-        createPeerConnection(
-            pendingCallUser
-        );
-
-
-        await peerConnection
-            .setRemoteDescription(
-                new RTCSessionDescription(
-                    pendingOffer
-                )
-            );
-
-
-        const answer =
-            await peerConnection
-                .createAnswer();
-
-
-        await peerConnection
-            .setLocalDescription(
-                answer
-            );
-
-
-        socket.emit(
-
-            "webrtc-answer",
-
-            {
-
-                to:
-                    pendingCallUser.id,
-
-                from:
-                    currentUser,
-
-                answer
-
-            }
-
-        );
-
-
-        callStatus.textContent =
-            "Connecting...";
-
-
-        pendingOffer =
-            null;
-
-        pendingCallUser =
-            null;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Accept call error:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   CREATE PEER CONNECTION
-===================================================== */
-
-function createPeerConnection(
-    user
-) {
-
-    if (peerConnection) {
-
-        peerConnection.close();
-
-    }
-
+async function createConnection() {
 
     peerConnection =
         new RTCPeerConnection(
@@ -2369,27 +1129,6 @@ function createPeerConnection(
 
     remoteVideo.srcObject =
         remoteStream;
-
-
-    if (localStream) {
-
-        localStream
-            .getTracks()
-            .forEach(
-                track => {
-
-                    peerConnection.addTrack(
-
-                        track,
-
-                        localStream
-
-                    );
-
-                }
-            );
-
-    }
 
 
     peerConnection.ontrack =
@@ -2412,64 +1151,24 @@ function createPeerConnection(
                 "hidden"
             );
 
-
-            remoteVideo
-                .play()
-                .catch(
-                    () => {}
-                );
-
-        };
-
-
-    peerConnection.onicecandidate =
-        event => {
-
-            if (
-                event.candidate
-            ) {
-
-                socket.emit(
-
-                    "ice-candidate",
-
-                    {
-
-                        to:
-                            user.id,
-
-                        from:
-                            currentUser,
-
-                        candidate:
-                            event.candidate
-
-                    }
-
-                );
-
-            }
-
         };
 
 
     peerConnection.onconnectionstatechange =
         () => {
 
-            if (!peerConnection) {
-                return;
-            }
-
-
             const state =
-                peerConnection
-                    .connectionState;
+                peerConnection.connectionState;
 
 
             console.log(
-                "WebRTC state:",
+                "WebRTC:",
                 state
             );
+
+
+            callStatus.textContent =
+                state;
 
 
             if (
@@ -2477,24 +1176,21 @@ function createPeerConnection(
                 "connected"
             ) {
 
+                startTimer();
+
                 callStatus.textContent =
                     "Connected 🟢";
-
-
-                startCallTimer();
 
             }
 
 
             if (
                 state ===
-                "failed" ||
-                state ===
-                "disconnected"
+                "failed"
             ) {
 
                 callStatus.textContent =
-                    "Connection lost";
+                    "Connection failed";
 
             }
 
@@ -2509,33 +1205,12 @@ function createPeerConnection(
 
 async function startLocalMedia() {
 
-    if (
-        localStream
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-    ) {
-
-        throw new Error(
-            "Camera API unavailable."
-        );
-
-    }
-
-
     localStream =
-        await navigator.mediaDevices
+        await navigator
+            .mediaDevices
             .getUserMedia(
 
                 {
-
                     video:
                         true,
 
@@ -2551,68 +1226,573 @@ async function startLocalMedia() {
         localStream;
 
 
-    localPlaceholder.classList.add(
-        "hidden"
-    );
+    localStream
+        .getTracks()
+        .forEach(
+            track => {
 
+                peerConnection.addTrack(
 
-    await localVideo
-        .play()
-        .catch(
-            () => {}
+                    track,
+
+                    localStream
+
+                );
+
+            }
         );
 
 }
 
 
 /* =====================================================
-   INCOMING CALL
+   OUTGOING CALL
 ===================================================== */
 
-function showIncomingCall(
+async function startOutgoingCall(
     user
 ) {
 
-    callerName.textContent =
-        user.username;
+    currentRemoteUser =
+        user;
 
 
-    incomingCallModal.classList.remove(
-        "hidden"
+    navigateTo(
+        "video-section"
     );
 
 
-    vibrate(
-        [300, 150, 300]
+    remoteUsername.textContent =
+        user.username;
+
+
+    callStatus.textContent =
+        "Creating offer...";
+
+
+    try {
+
+        await createConnection();
+
+        await startLocalMedia();
+
+
+        const offer =
+            await peerConnection
+                .createOffer();
+
+
+        await peerConnection
+            .setLocalDescription(
+                offer
+            );
+
+
+        /*
+           Wait for ICE gathering.
+
+           Because we have no
+           signaling server.
+        */
+
+        await waitForIce();
+
+
+        const data = {
+
+            type:
+                "OVC_OFFER",
+
+            from:
+                currentUser,
+
+            offer:
+                peerConnection
+                    .localDescription
+
+        };
+
+
+        showSignalQR(
+
+            "Scan this Offer QR on the other phone",
+
+            data
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        showToast(
+            "❌",
+            "Could not create call."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+async function handleOffer(
+    data
+) {
+
+    currentRemoteUser =
+        data.from;
+
+
+    navigateTo(
+        "video-section"
+    );
+
+
+    remoteUsername.textContent =
+        data.from.username;
+
+
+    await createConnection();
+
+    await startLocalMedia();
+
+
+    await peerConnection
+        .setRemoteDescription(
+
+            new RTCSessionDescription(
+                data.offer
+            )
+
+        );
+
+
+    const answer =
+        await peerConnection
+            .createAnswer();
+
+
+    await peerConnection
+        .setLocalDescription(
+            answer
+        );
+
+
+    await waitForIce();
+
+
+    const response = {
+
+        type:
+            "OVC_ANSWER",
+
+        from:
+            currentUser,
+
+        answer:
+            peerConnection
+                .localDescription
+
+    };
+
+
+    showSignalQR(
+
+        "Scan this Answer QR on the caller's phone",
+
+        response
+
     );
 
 }
 
 
-function setupIncomingCallControls() {
+/* =====================================================
+   ANSWER PROCESS
+===================================================== */
 
-    acceptCall.addEventListener(
-        "click",
-        acceptIncomingCall
+async function handleAnswer(
+    data
+) {
+
+    if (
+        !peerConnection
+    ) {
+
+        return;
+
+    }
+
+
+    await peerConnection
+        .setRemoteDescription(
+
+            new RTCSessionDescription(
+                data.answer
+            )
+
+        );
+
+
+    closeSignalModal();
+
+
+    callStatus.textContent =
+        "Connecting...";
+
+}
+
+
+/* =====================================================
+   ICE
+===================================================== */
+
+function waitForIce() {
+
+    return new Promise(
+        resolve => {
+
+            if (
+                peerConnection
+                    .iceGatheringState ===
+                "complete"
+            ) {
+
+                resolve();
+
+                return;
+
+            }
+
+
+            const timeout =
+                setTimeout(
+                    resolve,
+                    5000
+                );
+
+
+            peerConnection
+                .onicegatheringstatechange =
+                () => {
+
+                    if (
+                        peerConnection
+                            .iceGatheringState ===
+                        "complete"
+                    ) {
+
+                        clearTimeout(
+                            timeout
+                        );
+
+                        resolve();
+
+                    }
+
+                };
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   SIGNAL QR
+===================================================== */
+
+function showSignalQR(
+    description,
+    data
+) {
+
+    signalTitle.textContent =
+        "WebRTC Connection";
+
+    signalDescription.textContent =
+        description;
+
+
+    signalQr.innerHTML =
+        "";
+
+
+    const text =
+        JSON.stringify(
+            data
+        );
+
+
+    new QRCode(
+
+        signalQr,
+
+        {
+
+            text,
+
+            width:
+                220,
+
+            height:
+                220,
+
+            correctLevel:
+                QRCode.CorrectLevel.L
+
+        }
+
     );
 
 
-    rejectCall.addEventListener(
-        "click",
-        () => {
+    signalInput.value =
+        "";
 
-            incomingCallModal.classList.add(
-                "hidden"
+
+    signalModal.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   SIGNAL CONTROLS
+===================================================== */
+
+function setupSignalControls() {
+
+    signalCloseButton
+        .addEventListener(
+            "click",
+            closeSignalModal
+        );
+
+
+    signalSubmitButton
+        .addEventListener(
+            "click",
+            () => {
+
+                const text =
+                    signalInput.value.trim();
+
+
+                if (!text) {
+                    return;
+                }
+
+
+                processSignalQR(
+                    text
+                );
+
+            }
+        );
+
+
+    signalScanButton
+        .addEventListener(
+            "click",
+            startSignalScanner
+        );
+
+}
+
+
+function processSignalQR(
+    text
+) {
+
+    let data;
+
+    try {
+
+        data =
+            JSON.parse(
+                text
             );
 
+    }
 
-            pendingOffer =
-                null;
+    catch {
 
-            pendingCallUser =
-                null;
+        showToast(
+            "❌",
+            "Invalid signaling data."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        data.type ===
+        "OVC_OFFER"
+    ) {
+
+        handleOffer(
+            data
+        );
+
+        return;
+
+    }
+
+
+    if (
+        data.type ===
+        "OVC_ANSWER"
+    ) {
+
+        handleAnswer(
+            data
+        );
+
+        return;
+
+    }
+
+
+    showToast(
+        "❌",
+        "Unknown signaling data."
+    );
+
+}
+
+
+function closeSignalModal() {
+
+    signalModal.classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   SIGNAL SCANNER
+===================================================== */
+
+async function startSignalScanner() {
+
+    if (
+        typeof Html5Qrcode ===
+        "undefined"
+    ) {
+
+        return;
+
+    }
+
+
+    closeSignalModal();
+
+
+    const modal =
+        qrScannerPanel;
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    qrReader.innerHTML =
+        "";
+
+
+    signalScanner =
+        new Html5Qrcode(
+            "qr-reader"
+        );
+
+
+    try {
+
+        await signalScanner.start(
+
+            {
+                facingMode:
+                    "environment"
+            },
+
+            {
+                fps:
+                    10,
+
+                qrbox:
+                    250
+
+            },
+
+            text => {
+
+                stopSignalScanner();
+
+                processSignalQR(
+                    text
+                );
+
+            },
+
+            () => {}
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        showToast(
+            "❌",
+            "Could not open camera."
+        );
+
+    }
+
+}
+
+
+async function stopSignalScanner() {
+
+    if (
+        signalScanner
+    ) {
+
+        try {
+
+            await signalScanner.stop();
+
+            await signalScanner.clear();
 
         }
+
+        catch {}
+
+        signalScanner =
+            null;
+
+    }
+
+
+    qrScannerPanel.classList.add(
+        "hidden"
     );
 
 }
@@ -2638,10 +1818,7 @@ function setupCallControls() {
 
     endCallButton.addEventListener(
         "click",
-        () =>
-            endCall(
-                true
-            )
+        endCall
     );
 
 
@@ -2714,41 +1891,17 @@ function toggleCamera() {
 
 
     localPlaceholder.classList.toggle(
+
         "hidden",
+
         !isCameraOff
+
     );
 
 }
 
 
-function endCall(
-    notifyRemote = true
-) {
-
-    if (
-        notifyRemote &&
-        activeCallUser &&
-        socket
-    ) {
-
-        socket.emit(
-
-            "call-ended",
-
-            {
-
-                to:
-                    activeCallUser.id,
-
-                from:
-                    currentUser
-
-            }
-
-        );
-
-    }
-
+function endCall() {
 
     if (localStream) {
 
@@ -2775,19 +1928,11 @@ function endCall(
     }
 
 
-    if (remoteVideo) {
-
-        remoteVideo.srcObject =
-            null;
-
-    }
-
-
-    activeCallUser =
+    remoteVideo.srcObject =
         null;
 
 
-    stopCallTimer();
+    stopTimer();
 
 
     navigateTo(
@@ -2804,13 +1949,12 @@ function endCall(
 
 
 /* =====================================================
-   CALL TIMER
+   TIMER
 ===================================================== */
 
-function startCallTimer() {
+function startTimer() {
 
-    stopCallTimer();
-
+    stopTimer();
 
     callStartTime =
         Date.now();
@@ -2820,36 +1964,32 @@ function startCallTimer() {
         setInterval(
             () => {
 
-                const elapsed =
-                    Date.now() -
-                    callStartTime;
-
-
                 const seconds =
                     Math.floor(
-                        elapsed /
-                        1000
+
+                        (
+                            Date.now() -
+                            callStartTime
+                        ) / 1000
+
                     );
 
 
                 const minutes =
                     Math.floor(
-                        seconds /
-                        60
+                        seconds / 60
                     );
 
 
                 const remaining =
-                    seconds %
-                    60;
+                    seconds % 60;
 
 
                 callTimer.textContent =
 
                     String(
                         minutes
-                    )
-                    .padStart(
+                    ).padStart(
                         2,
                         "0"
                     )
@@ -2862,8 +2002,7 @@ function startCallTimer() {
 
                     String(
                         remaining
-                    )
-                    .padStart(
+                    ).padStart(
                         2,
                         "0"
                     );
@@ -2877,294 +2016,17 @@ function startCallTimer() {
 }
 
 
-function stopCallTimer() {
+function stopTimer() {
 
-    if (
+    clearInterval(
         callTimerInterval
-    ) {
-
-        clearInterval(
-            callTimerInterval
-        );
-
-        callTimerInterval =
-            null;
-
-    }
-
-
-    if (callTimer) {
-
-        callTimer.textContent =
-            "00:00";
-
-    }
-
-}
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-function setupNavigation() {
-
-    document
-        .querySelectorAll(
-            "[data-section]"
-        )
-        .forEach(
-            element => {
-
-                element.addEventListener(
-                    "click",
-                    () => {
-
-                        navigateTo(
-                            element.dataset.section
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    if (navProfile) {
-
-        navProfile.addEventListener(
-            "click",
-            () => {
-
-                navigateTo(
-                    "profile-section"
-                );
-
-            }
-        );
-
-    }
-
-}
-
-
-function navigateTo(
-    sectionId
-) {
-
-    sections.forEach(
-        section => {
-
-            section.classList.remove(
-                "active-section"
-            );
-
-        }
     );
 
-
-    const target =
-        document.getElementById(
-            sectionId
-        );
-
-
-    if (!target) {
-        return;
-    }
-
-
-    target.classList.add(
-        "active-section"
-    );
-
-
-    navItems.forEach(
-        item => {
-
-            item.classList.toggle(
-
-                "active",
-
-                item.dataset.section ===
-                sectionId
-
-            );
-
-        }
-    );
-
-
-    bottomNavItems.forEach(
-        item => {
-
-            item.classList.toggle(
-
-                "active",
-
-                item.dataset.section ===
-                sectionId
-
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   SETTINGS
-===================================================== */
-
-function setupSettings() {
-
-    if (vibrationToggle) {
-
-        vibrationToggle.addEventListener(
-            "change",
-            () => {
-
-                currentSettings.vibration =
-                    vibrationToggle.checked;
-
-                saveSettings();
-
-            }
-        );
-
-    }
-
-
-    if (notificationToggle) {
-
-        notificationToggle.addEventListener(
-            "change",
-            () => {
-
-                currentSettings.notifications =
-                    notificationToggle.checked;
-
-                saveSettings();
-
-            }
-        );
-
-    }
-
-
-    if (gifToggle) {
-
-        gifToggle.addEventListener(
-            "change",
-            () => {
-
-                currentSettings.gifs =
-                    gifToggle.checked;
-
-                saveSettings();
-
-            }
-        );
-
-    }
-
-
-    if (clearData) {
-
-        clearData.addEventListener(
-            "click",
-            clearOVCData
-        );
-
-    }
-
-
-    if (editProfile) {
-
-        editProfile.addEventListener(
-            "click",
-            editUserProfile
-        );
-
-    }
-
-}
-
-
-function saveSettings() {
-
-    localStorage.setItem(
-
-        SETTINGS_KEY,
-
-        JSON.stringify(
-            currentSettings
-        )
-
-    );
-
-}
-
-
-function loadSettings() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                SETTINGS_KEY
-            );
-
-
-        if (saved) {
-
-            currentSettings = {
-
-                ...currentSettings,
-
-                ...JSON.parse(
-                    saved
-                )
-
-            };
-
-        }
-
-
-        if (vibrationToggle) {
-
-            vibrationToggle.checked =
-                currentSettings.vibration;
-
-        }
-
-
-        if (notificationToggle) {
-
-            notificationToggle.checked =
-                currentSettings.notifications;
-
-        }
-
-
-        if (gifToggle) {
-
-            gifToggle.checked =
-                currentSettings.gifs;
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-    }
+    callTimerInterval =
+        null;
+
+    callTimer.textContent =
+        "00:00";
 
 }
 
@@ -3173,151 +2035,140 @@ function loadSettings() {
    PROFILE
 ===================================================== */
 
-function editUserProfile() {
+function setupProfile() {
 
-    if (!currentUser) {
-        return;
-    }
+    $("edit-profile")
+        .addEventListener(
+            "click",
+            () => {
+
+                const name =
+                    prompt(
+                        "New name:",
+                        currentUser.username
+                    );
 
 
-    const newName =
-        prompt(
+                if (
+                    name &&
+                    name.trim()
+                ) {
 
-            "Enter your new username:",
+                    currentUser.username =
+                        name.trim();
 
-            currentUser.username
+                    saveUser();
 
+                    updateUserUI();
+
+                    generateUserQR();
+
+                }
+
+            }
         );
 
 
-    if (
-        !newName ||
-        !newName.trim()
-    ) {
+    $("clear-data")
+        .addEventListener(
+            "click",
+            () => {
 
-        return;
+                if (
+                    confirm(
+                        "Clear all OVC data?"
+                    )
+                ) {
 
-    }
+                    localStorage.clear();
 
+                    location.reload();
 
-    currentUser.username =
-        newName.trim();
+                }
 
-
-    saveUser();
-
-    updateUserInterface();
-
-    registerUserWithServer();
-
-
-    showToast(
-        "✅",
-        "Profile updated."
-    );
+            }
+        );
 
 }
 
 
 /* =====================================================
-   CLEAR DATA
+   QR DOWNLOAD
 ===================================================== */
 
-function clearOVCData() {
+$("download-qr")
+    .addEventListener(
+        "click",
+        () => {
 
-    if (
-        !confirm(
-            "Clear all OVC data?"
-        )
-    ) {
-
-        return;
-
-    }
+            const canvas =
+                qrCode.querySelector(
+                    "canvas"
+                );
 
 
-    localStorage.removeItem(
-        STORAGE_KEY
+            if (!canvas) {
+                return;
+            }
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.download =
+                "ovc-qr.png";
+
+
+            link.href =
+                canvas.toDataURL(
+                    "image/png"
+                );
+
+
+            link.click();
+
+        }
     );
-
-    localStorage.removeItem(
-        SETTINGS_KEY
-    );
-
-    localStorage.removeItem(
-        PEOPLE_STORAGE_KEY
-    );
-
-
-    location.reload();
-
-}
 
 
 /* =====================================================
-   VIBRATION
+   QR SHARE
 ===================================================== */
 
-function vibrate(
-    pattern
-) {
+$("share-qr")
+    .addEventListener(
+        "click",
+        async () => {
 
-    if (
-        !currentSettings.vibration
-    ) {
+            if (
+                !navigator.share
+            ) {
 
-        return;
+                showToast(
+                    "ℹ️",
+                    "Sharing unavailable."
+                );
 
-    }
+                return;
 
-
-    if (
-        navigator.vibrate
-    ) {
-
-        navigator.vibrate(
-            pattern
-        );
-
-    }
-
-}
+            }
 
 
-/* =====================================================
-   CONNECTION STATUS
-===================================================== */
+            await navigator.share({
 
-function updateConnectionStatus(
-    connected
-) {
+                title:
+                    "My OVC QR",
 
-    const element =
-        document.getElementById(
-            "connection-status"
-        );
+                text:
+                    "Connect with me on OVC."
 
+            });
 
-    if (!element) {
-        return;
-    }
-
-
-    if (connected) {
-
-        element.textContent =
-            "🟢 OVC Server Connected";
-
-    }
-
-    else {
-
-        element.textContent =
-            "🔴 OVC Server Disconnected";
-
-    }
-
-}
+        }
+    );
 
 
 /* =====================================================
@@ -3327,23 +2178,11 @@ function updateConnectionStatus(
 function toggleFullscreen() {
 
     if (
-        !videoSection
-    ) {
-
-        return;
-
-    }
-
-
-    if (
         !document.fullscreenElement
     ) {
 
         videoSection
-            .requestFullscreen()
-            .catch(
-                console.error
-            );
+            .requestFullscreen();
 
     }
 
@@ -3357,112 +2196,36 @@ function toggleFullscreen() {
 
 
 /* =====================================================
-   PWA INSTALL
+   TOAST
 ===================================================== */
 
-function setupInstallPrompt() {
+function showToast(
+    icon,
+    message
+) {
 
-    if (
-        !installPrompt
-    ) {
+    toastIcon.textContent =
+        icon;
 
-        return;
+    toastMessage.textContent =
+        message;
 
-    }
-
-
-    installPrompt.classList.add(
-        "hidden"
+    toast.classList.add(
+        "show"
     );
 
 
-    if (installButton) {
-
-        installButton.addEventListener(
-            "click",
-            installOVC
-        );
-
-    }
-
-
-    if (closeInstall) {
-
-        closeInstall.addEventListener(
-            "click",
-            () => {
-
-                installPrompt.classList.add(
-                    "hidden"
-                );
-
-            }
-        );
-
-    }
-
-
-    window.addEventListener(
-        "beforeinstallprompt",
-        event => {
-
-            event.preventDefault();
-
-
-            deferredInstallPrompt =
-                event;
-
-
-            installPrompt.classList.remove(
-                "hidden"
-            );
-
-        }
-    );
-
-
-    window.addEventListener(
-        "appinstalled",
+    setTimeout(
         () => {
 
-            deferredInstallPrompt =
-                null;
-
-
-            installPrompt.classList.add(
-                "hidden"
+            toast.classList.remove(
+                "show"
             );
 
-        }
-    );
+        },
 
-}
+        3000
 
-
-async function installOVC() {
-
-    if (
-        !deferredInstallPrompt
-    ) {
-
-        return;
-
-    }
-
-
-    deferredInstallPrompt.prompt();
-
-
-    await deferredInstallPrompt
-        .userChoice;
-
-
-    deferredInstallPrompt =
-        null;
-
-
-    installPrompt.classList.add(
-        "hidden"
     );
 
 }
@@ -3472,44 +2235,28 @@ async function installOVC() {
    SERVICE WORKER
 ===================================================== */
 
-function setupServiceWorker() {
+function registerServiceWorker() {
 
     if (
-        "serviceWorker" in
-        navigator
+        "serviceWorker" in navigator
     ) {
 
-        window.addEventListener(
-            "load",
-            () => {
+        navigator.serviceWorker
+            .register(
+                "sw.js"
+            )
+            .then(
+                () => {
 
-                navigator.serviceWorker
-                    .register(
-                        "./sw.js"
-                    )
-                    .then(
-                        registration => {
-
-                            console.log(
-                                "Service Worker registered:",
-                                registration.scope
-                            );
-
-                        }
-                    )
-                    .catch(
-                        error => {
-
-                            console.error(
-                                "Service Worker error:",
-                                error
-                            );
-
-                        }
+                    console.log(
+                        "OVC offline cache ready."
                     );
 
-            }
-        );
+                }
+            )
+            .catch(
+                console.error
+            );
 
     }
 
@@ -3529,20 +2276,9 @@ function escapeHTML(
             "div"
         );
 
-
     div.textContent =
         value;
-
 
     return div.innerHTML;
 
 }
-
-
-/* =====================================================
-   DEBUG
-===================================================== */
-
-console.log(
-    `OVC v${OVC_VERSION} client loaded.`
-);

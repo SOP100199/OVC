@@ -1,150 +1,111 @@
-const CACHE_NAME = "ovc-v0.1-cache";
+const CACHE_NAME =
+    "ovc-offline-v1";
 
-const FILES_TO_CACHE = [
+
+const APP_FILES = [
     "./",
     "./index.html",
     "./style.css",
     "./script.js",
     "./manifest.json",
-
-    // GIFs
-    "./assets/gifs/calling.gif",
-    "./assets/gifs/celebrating.gif",
-    "./assets/gifs/confused.gif",
-    "./assets/gifs/connectionlost.gif",
-    "./assets/gifs/dancing.gif",
-    "./assets/gifs/excited.gif",
-    "./assets/gifs/goodbye.gif",
-    "./assets/gifs/laughing.gif",
-    "./assets/gifs/shocked.gif",
-    "./assets/gifs/success.gif",
-    "./assets/gifs/talking.gif",
-    "./assets/gifs/thinking.gif",
-    "./assets/gifs/welcome.gif",
-
-    // PWA icons
-    "./assets/icons/icon-192.png",
-    "./assets/icons/icon-512.png"
+    "./libs/qrcode.min.js",
+    "./libs/html5-qrcode.min.js"
 ];
 
+self.addEventListener(
+    "install",
+    event => {
 
-/* =========================================
-   INSTALL SERVICE WORKER
-========================================= */
+        event.waitUntil(
 
-self.addEventListener("install", (event) => {
+            caches
+                .open(
+                    CACHE_NAME
+                )
+                .then(
+                    cache =>
+                        cache.addAll(
+                            APP_FILES
+                        )
+                )
 
-    console.log("OVC Service Worker: Installing...");
-
-    event.waitUntil(
-
-        caches.open(CACHE_NAME)
-
-            .then((cache) => {
-
-                console.log(
-                    "OVC: Caching application files..."
-                );
-
-                return cache.addAll(
-                    FILES_TO_CACHE
-                );
-
-            })
-
-    );
-
-    // Activate immediately
-    self.skipWaiting();
-
-});
+        );
 
 
-/* =========================================
-   ACTIVATE SERVICE WORKER
-========================================= */
+        self.skipWaiting();
 
-self.addEventListener("activate", (event) => {
-
-    console.log(
-        "OVC Service Worker: Activated"
-    );
-
-    event.waitUntil(
-
-        caches.keys()
-
-            .then((cacheNames) => {
-
-                return Promise.all(
-
-                    cacheNames.map(
-                        (cacheName) => {
-
-                            // Delete old OVC caches
-                            if (
-                                cacheName !==
-                                CACHE_NAME
-                            ) {
-
-                                console.log(
-                                    "OVC: Removing old cache:",
-                                    cacheName
-                                );
-
-                                return caches.delete(
-                                    cacheName
-                                );
-
-                            }
-
-                        }
-                    )
-
-                );
-
-            })
-
-    );
-
-    // Take control of open pages
-    self.clients.claim();
-
-});
+    }
+);
 
 
-/* =========================================
-   FETCH
-========================================= */
+self.addEventListener(
+    "activate",
+    event => {
 
-self.addEventListener("fetch", (event) => {
+        event.waitUntil(
 
-    // Only handle HTTP and HTTPS requests
-    if (
-        event.request.url.startsWith("http://") ||
-        event.request.url.startsWith("https://")
-    ) {
+            caches
+                .keys()
+                .then(
+                    keys =>
+
+                        Promise.all(
+
+                            keys
+                                .filter(
+                                    key =>
+                                        key !==
+                                        CACHE_NAME
+                                )
+
+                                .map(
+                                    key =>
+                                        caches.delete(
+                                            key
+                                        )
+                                )
+
+                        )
+
+                )
+
+        );
+
+
+        self.clients.claim();
+
+    }
+);
+
+
+self.addEventListener(
+    "fetch",
+    event => {
 
         event.respondWith(
 
-            caches.match(event.request)
+            caches
+                .match(
+                    event.request
+                )
 
-                .then((cachedResponse) => {
+                .then(
+                    cached => {
 
-                    // Return cached file if available
-                    if (cachedResponse) {
+                        return (
 
-                        return cachedResponse;
+                            cached ||
+
+                            fetch(
+                                event.request
+                            )
+
+                        );
 
                     }
-
-                    // Otherwise get it from network
-                    return fetch(event.request);
-
-                })
+                )
 
         );
 
     }
-
-});
+);

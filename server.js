@@ -1,7 +1,8 @@
 const express = require("express");
 const http = require("http");
-const { Server } = require("socket.io");
 const path = require("path");
+const os = require("os");
+const { Server } = require("socket.io");
 
 const app = express();
 
@@ -16,276 +17,468 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
+/* =====================================================
+   EXPRESS
+===================================================== */
+
 app.use(express.json());
+
 app.use(express.urlencoded({
     extended: true
 }));
 
 app.use(express.static(__dirname));
 
+
+/* =====================================================
+   MAIN PAGE
+===================================================== */
+
 app.get("/", (req, res) => {
+
     res.sendFile(
         path.join(__dirname, "index.html")
     );
+
 });
 
+
+/* =====================================================
+   HEALTH
+===================================================== */
+
 app.get("/health", (req, res) => {
+
     res.json({
         status: "OK",
         app: "OVC",
-        message: "OVC signaling server is running"
+        mode: "OFFLINE_FIRST"
     });
+
 });
 
+
+/* =====================================================
+   CONNECTED USERS
+===================================================== */
+
 const users = new Map();
+
+
+/* =====================================================
+   SOCKET.IO
+===================================================== */
 
 io.on("connection", (socket) => {
 
     console.log(
-        "Socket connected:",
+        "Client connected:",
         socket.id
     );
 
-    socket.on("register-user", (user) => {
 
-        if (
-            !user ||
-            !user.id
-        ) {
-            return;
-        }
-
-        users.set(
-            user.id,
-            {
-                ...user,
-                socketId: socket.id
-            }
-        );
-
-        socket.userId =
-            user.id;
-
-        console.log(
-            "User registered:",
-            user.username,
-            user.id
-        );
-
-    });
+    /* ================================================
+       REGISTER USER
+    ================================================ */
 
     socket.on(
-        "find-user",
-        (
-            userId,
-            callback
-        ) => {
-
-            const user =
-                users.get(userId);
+        "register-user",
+        (user) => {
 
             if (
-                typeof callback ===
-                "function"
+                !user ||
+                !user.id ||
+                !user.username
             ) {
 
-                callback(
-                    user || null
-                );
+                return;
 
             }
+
+
+            users.set(
+                socket.id,
+                {
+                    socketId: socket.id,
+                    id: user.id,
+                    username: user.username,
+                    avatar: user.avatar || "👤"
+                }
+            );
+
+
+            console.log(
+                "User registered:",
+                user.username,
+                socket.id
+            );
+
+
+            /* Send current online users */
+
+            broadcastUsers();
 
         }
     );
+
+
+    /* ================================================
+       REQUEST CONNECTION
+    ================================================ */
 
     socket.on(
         "connection-request",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
-
-            if (!target) {
-
-                socket.emit(
-                    "user-offline",
-                    {
-                        userId:
-                            data.to
-                    }
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
                 return;
 
             }
 
+
+            const sender =
+                users.get(
+                    socket.id
+                );
+
+
+            if (!sender) {
+
+                return;
+
+            }
+
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
-                "connection-request",
+                "incoming-connection-request",
                 {
-                    from:
-                        data.from
+                    from: sender,
+                    socketId: socket.id
                 }
             );
 
         }
     );
+
+
+    /* ================================================
+       CONNECTION RESPONSE
+    ================================================ */
 
     socket.on(
         "connection-response",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
-            if (!target) {
                 return;
+
             }
 
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
                 "connection-response",
                 {
-                    from:
-                        data.from,
-
                     accepted:
-                        data.accepted
+                        data.accepted,
+
+                    from:
+                        users.get(
+                            socket.id
+                        )
                 }
             );
 
         }
     );
 
+
+    /* ================================================
+       WEBRTC OFFER
+    ================================================ */
+
     socket.on(
         "webrtc-offer",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
-            if (!target) {
                 return;
+
             }
 
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
                 "webrtc-offer",
-                data
+                {
+                    offer:
+                        data.offer,
+
+                    fromSocketId:
+                        socket.id
+                }
             );
 
         }
     );
+
+
+    /* ================================================
+       WEBRTC ANSWER
+    ================================================ */
 
     socket.on(
         "webrtc-answer",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
-            if (!target) {
                 return;
+
             }
 
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
                 "webrtc-answer",
-                data
+                {
+                    answer:
+                        data.answer,
+
+                    fromSocketId:
+                        socket.id
+                }
             );
 
         }
     );
+
+
+    /* ================================================
+       ICE CANDIDATE
+    ================================================ */
 
     socket.on(
-        "ice-candidate",
+        "webrtc-ice-candidate",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
-            if (!target) {
                 return;
+
             }
 
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
-                "ice-candidate",
-                data
+                "webrtc-ice-candidate",
+                {
+                    candidate:
+                        data.candidate,
+
+                    fromSocketId:
+                        socket.id
+                }
             );
 
         }
     );
+
+
+    /* ================================================
+       END CALL
+    ================================================ */
 
     socket.on(
-        "call-ended",
+        "end-call",
         (data) => {
 
-            const target =
-                users.get(
-                    data.to
-                );
+            if (
+                !data ||
+                !data.targetSocketId
+            ) {
 
-            if (!target) {
                 return;
+
             }
 
+
             io.to(
-                target.socketId
+                data.targetSocketId
             ).emit(
-                "call-ended",
-                data
+                "remote-call-ended"
             );
 
         }
     );
+
+
+    /* ================================================
+       DISCONNECT
+    ================================================ */
 
     socket.on(
         "disconnect",
         () => {
 
-            if (
-                socket.userId
-            ) {
+            const user =
+                users.get(
+                    socket.id
+                );
 
-                users.delete(
-                    socket.userId
+
+            if (user) {
+
+                console.log(
+                    "User disconnected:",
+                    user.username
                 );
 
             }
 
-            console.log(
-                "Socket disconnected:",
+
+            users.delete(
                 socket.id
             );
+
+
+            broadcastUsers();
 
         }
     );
 
 });
+
+
+/* =====================================================
+   BROADCAST ONLINE USERS
+===================================================== */
+
+function broadcastUsers() {
+
+    const userList =
+        Array.from(
+            users.values()
+        );
+
+
+    io.emit(
+        "online-users",
+        userList
+    );
+
+}
+
+
+/* =====================================================
+   GET LOCAL IP
+===================================================== */
+
+function getLocalIP() {
+
+    const interfaces =
+        os.networkInterfaces();
+
+
+    for (
+        const name of Object.keys(interfaces)
+    ) {
+
+        for (
+            const network of interfaces[name]
+        ) {
+
+            if (
+                network.family === "IPv4" &&
+                !network.internal
+            ) {
+
+                return network.address;
+
+            }
+
+        }
+
+    }
+
+
+    return "localhost";
+
+}
+
+
+/* =====================================================
+   START SERVER
+===================================================== */
 
 server.listen(
     PORT,
     "0.0.0.0",
     () => {
 
+        const ip =
+            getLocalIP();
+
+
+        console.log("");
         console.log(
-            `OVC signaling server running on port ${PORT}`
+            "===================================="
+        );
+
+        console.log(
+            "       OVC OFFLINE SERVER"
+        );
+
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            `Local: http://localhost:${PORT}`
+        );
+
+        console.log(
+            `LAN:   http://${ip}:${PORT}`
+        );
+
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            "Connect devices to the same Wi-Fi"
+        );
+
+        console.log(
+            "Then open the LAN URL above."
+        );
+
+        console.log(
+            "===================================="
         );
 
     }

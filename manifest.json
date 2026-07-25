@@ -1,21 +1,11 @@
 {
-  "name": "OVC - Offline Video Communication",
-  "short_name": "OVC",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#08090d",
-  "theme_color": "#08090d",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "/assets/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/assets/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    "name": "OVC - Offline Video Communication",
+    "short_name": "OVC",
+    "description": "Offline-first video and audio communication",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait",
+    "icons": []
 }
