@@ -635,65 +635,76 @@ function setupQRInterface() {
 ===================================================== */
 
 function generateUserQR() {
-  if (!qrCode || !currentUser) {
-    return;
-  }
 
-  qrCode.innerHTML = "";
+    if (!qrCode || !currentUser) {
+        console.log("QR element or user not available");
+        return;
+    }
 
-  const qrData = {
-    type: "OVC_USER",
+    // Clear previous QR
+    qrCode.innerHTML = "";
 
-    id: currentUser.id,
+    // Keep QR data small
+    const qrData = {
+        type: "OVC_USER",
+        id: currentUser.id,
+        username: currentUser.username
+    };
 
-    username: currentUser.username,
+    const qrText = JSON.stringify(qrData);
 
-    avatar: currentUser.avatar,
-  };
+    console.log("Generating QR:", qrText);
 
-  const qrText = JSON.stringify(qrData);
+    // Check QR library
+    if (typeof QRCode === "undefined") {
 
-  console.log("Generating QR:", qrText);
+        console.error("QRCode library not found!");
 
-  if (typeof QRCode === "undefined") {
-    console.error("QRCode library not found.");
-
-    qrCode.innerHTML = `
-
+        qrCode.innerHTML = `
             <div class="qr-error">
-
                 ⚠️ QR generator unavailable
-
             </div>
-
         `;
 
-    return;
-  }
+        return;
+    }
 
-  try {
-    new QRCode(
-      qrCode,
+    try {
 
-      {
-        text: qrText,
+        new QRCode(qrCode, {
 
-        width: 220,
+            text: qrText,
 
-        height: 220,
+            width: 220,
 
-        colorDark: "#000000",
+            height: 220,
 
-        colorLight: "#ffffff",
+            colorDark: "#000000",
 
-        correctLevel: QRCode.CorrectLevel.H,
-      },
-    );
-  } catch (error) {
-    console.error("QR generation error:", error);
-  }
+            colorLight: "#ffffff",
+
+            correctLevel: QRCode.CorrectLevel.M
+
+        });
+
+        console.log("✅ QR generated successfully");
+
+    } catch (error) {
+
+        console.error(
+            "QR generation error:",
+            error
+        );
+
+        qrCode.innerHTML = `
+            <div class="qr-error">
+                ❌ Failed to generate QR
+            </div>
+        `;
+
+    }
+
 }
-
 /* =====================================================
    QR SHARE
 ===================================================== */
