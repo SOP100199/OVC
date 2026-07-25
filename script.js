@@ -1476,57 +1476,77 @@ function connectToSignalingServer() {
 ===================================================== */
 
 async function startCall(user) {
-  try {
-    currentCallUser = user;
 
-    navigateTo("video-section");
+    try {
 
-    if (callStatus) {
-      callStatus.textContent = "Requesting camera and microphone...";
+        console.log(
+            "📞 Starting call with:",
+            user
+        );
+
+        navigateTo(
+            "video-section"
+        );
+
+        callStatus.textContent =
+            "Requesting camera and microphone...";
+
+        if (callGif) {
+            callGif.src =
+                gifs.calling;
+        }
+
+        // FIRST: Open camera
+        await startLocalMedia();
+
+        console.log(
+            "✅ Local media ready."
+        );
+
+        // SECOND: Create WebRTC connection
+        createPeerConnection();
+
+        // THIRD: Set remote user
+        if (remoteUsername) {
+            remoteUsername.textContent =
+                user.username;
+        }
+
+        callStatus.textContent =
+            "Connecting...";
+
+        showToast(
+            "📡",
+            "Camera started. Waiting for connection..."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ OVC call error:",
+            error
+        );
+
+        callStatus.textContent =
+            "Camera unavailable";
+
+        if (localStream) {
+
+            localStream
+                .getTracks()
+                .forEach(
+                    track => track.stop()
+                );
+
+            localStream = null;
+        }
+
+        showToast(
+            "❌",
+            "Unable to start camera or microphone."
+        );
     }
-
-    if (callGif) {
-      callGif.src = gifs.calling;
-    }
-
-    await startLocalMedia();
-
-    createPeerConnection();
-
-    if (remoteUsername) {
-      remoteUsername.textContent = user.username;
-    }
-
-    const offer = await peerConnection.createOffer();
-
-    await peerConnection.setLocalDescription(offer);
-
-    socket.emit(
-      "webrtc-offer",
-
-      {
-        to: user.id,
-
-        from: currentUser,
-
-        offer: offer,
-      },
-    );
-
-    if (callStatus) {
-      callStatus.textContent = "Calling...";
-    }
-  } catch (error) {
-    console.error("Call error:", error);
-
-    showToast(
-      "❌",
-
-      "Unable to start call.",
-    );
-  }
 }
-
 /* =====================================================
    PREPARE INCOMING CALL
 ===================================================== */
