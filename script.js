@@ -1634,23 +1634,129 @@ if (rejectCall) {
 ===================================================== */
 
 async function startLocalMedia() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    throw new Error("Camera API unavailable.");
-  }
+    console.log("📷 Starting local camera...");
 
-  localStream = await navigator.mediaDevices.getUserMedia({
-    video: true,
+    if (!window.isSecureContext) {
+        throw new Error(
+            "Camera requires HTTPS or localhost."
+        );
+    }
 
-    audio: true,
-  });
+    if (!navigator.mediaDevices) {
+        throw new Error(
+            "navigator.mediaDevices is unavailable."
+        );
+    }
 
-  if (localVideo) {
-    localVideo.srcObject = localStream;
-  }
+    if (!navigator.mediaDevices.getUserMedia) {
+        throw new Error(
+            "getUserMedia() is not supported."
+        );
+    }
 
-  if (localPlaceholder) {
-    localPlaceholder.classList.add("hidden");
-  }
+    try {
+        console.log("📷 Requesting camera and microphone permission...");
+
+        localStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "user"
+            },
+            audio: true
+        });
+
+        console.log(
+            "✅ Camera and microphone access granted."
+        );
+
+        console.log(
+            "🎥 Video tracks:",
+            localStream.getVideoTracks()
+        );
+
+        console.log(
+            "🎤 Audio tracks:",
+            localStream.getAudioTracks()
+        );
+
+        if (localVideo) {
+            localVideo.srcObject = localStream;
+
+            localVideo.muted = true;
+            localVideo.autoplay = true;
+            localVideo.playsInline = true;
+
+            try {
+                await localVideo.play();
+            } catch (error) {
+                console.warn(
+                    "Video autoplay blocked:",
+                    error
+                );
+            }
+        }
+
+        if (localPlaceholder) {
+            localPlaceholder.classList.add(
+                "hidden"
+            );
+        }
+
+        return localStream;
+
+    } catch (error) {
+
+        console.error(
+            "❌ getUserMedia error:",
+            error
+        );
+
+        switch (error.name) {
+
+            case "NotAllowedError":
+                showToast(
+                    "🚫",
+                    "Camera or microphone permission was denied."
+                );
+                break;
+
+            case "NotFoundError":
+                showToast(
+                    "❌",
+                    "No camera or microphone was found."
+                );
+                break;
+
+            case "NotReadableError":
+                showToast(
+                    "⚠️",
+                    "Camera is already being used by another application."
+                );
+                break;
+
+            case "SecurityError":
+                showToast(
+                    "🔒",
+                    "Camera access was blocked for security reasons."
+                );
+                break;
+
+            case "OverconstrainedError":
+                showToast(
+                    "⚠️",
+                    "Camera configuration is not supported."
+                );
+                break;
+
+            default:
+                showToast(
+                    "❌",
+                    "Unable to access camera: " +
+                    error.message
+                );
+        }
+
+        throw error;
+    }
 }
 
 /* =====================================================
