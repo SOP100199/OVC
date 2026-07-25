@@ -1224,25 +1224,43 @@ function setupConnectionControls() {
 }
 
 function requestCall(user) {
-  if (!user) {
-    return;
-  }
 
-  currentConnectionUser = user;
+    if (
+        !lanConnected
+    ) {
 
-  if (connectionUserName) {
-    connectionUserName.textContent = user.username;
-  }
+        showToast(
+            "❌",
+            "You are not connected to the OVC LAN."
+        );
 
-  if (connectionUserAvatar) {
-    connectionUserAvatar.textContent = user.avatar || "👤";
-  }
+        return;
 
-  if (connectionModal) {
-    connectionModal.classList.remove("hidden");
-  }
+    }
 
-  vibrate([100, 50, 100]);
+
+    currentConnectionUser =
+        user;
+
+
+    connectionUserName.textContent =
+        user.username;
+
+
+    connectionUserAvatar.textContent =
+        user.avatar ||
+        "👤";
+
+
+    connectionModal.classList.remove(
+        "hidden"
+    );
+
+
+    vibrate(
+        [100, 50, 100]
+    );
+
 }
 
 function closeConnectionRequest() {
@@ -2028,6 +2046,368 @@ document.addEventListener(
     }
   },
 );
+
+
+/* =====================================================
+   OVC LAN NETWORK
+===================================================== */
+
+let ovcSocket = null;
+
+let LAN_SERVER_URL =
+    "ws://192.168.1.10:8080";
+
+
+let lanConnected =
+    false;
+
+
+/* =====================================================
+   CONNECT TO LAN SERVER
+===================================================== */
+
+function connectToLANServer() {
+
+    if (!currentUser) {
+
+        console.warn(
+            "Cannot connect to LAN without user."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "📡 Connecting to OVC LAN server..."
+    );
+
+
+    ovcSocket =
+        new WebSocket(
+            LAN_SERVER_URL
+        );
+
+
+    /* ================================================
+       CONNECTED
+    ================================================ */
+
+    ovcSocket.onopen =
+        function() {
+
+            console.log(
+                "✅ Connected to OVC LAN"
+            );
+
+
+            lanConnected =
+                true;
+
+
+            showToast(
+                "📡",
+                "Connected to OVC LAN"
+            );
+
+
+            ovcSocket.send(
+
+                JSON.stringify({
+
+                    type:
+                        "REGISTER",
+
+                    user:
+                        {
+
+                            id:
+                                currentUser.id,
+
+                            username:
+                                currentUser.username,
+
+                            avatar:
+                                currentUser.avatar
+
+                        }
+
+                })
+
+            );
+
+        };
+
+
+    /* ================================================
+       MESSAGE
+    ================================================ */
+
+    ovcSocket.onmessage =
+        function(event) {
+
+            let message;
+
+            try {
+
+                message =
+                    JSON.parse(
+                        event.data
+                    );
+
+            }
+
+            catch {
+
+                return;
+
+            }
+
+
+            handleLANMessage(
+                message
+            );
+
+        };
+
+
+    /* ================================================
+       ERROR
+    ================================================ */
+
+    ovcSocket.onerror =
+        function(error) {
+
+            console.error(
+                "OVC LAN error:",
+                error
+            );
+
+
+            lanConnected =
+                false;
+
+
+            showToast(
+                "❌",
+                "Cannot connect to OVC LAN"
+            );
+
+        };
+
+
+    /* ================================================
+       DISCONNECTED
+    ================================================ */
+
+    ovcSocket.onclose =
+        function() {
+
+            console.log(
+                "📡 Disconnected from OVC LAN"
+            );
+
+
+            lanConnected =
+                false;
+
+        };
+
+}
+/* =====================================================
+   LAN MESSAGE HANDLER
+===================================================== */
+
+function handleLANMessage(message) {
+
+    console.log(
+        "📨 LAN message:",
+        message
+    );
+
+
+    /* ================================================
+       USER LIST
+    ================================================ */
+
+    if (
+        message.type ===
+        "USER_LIST"
+    ) {
+
+        updateLANPeople(
+            message.users
+        );
+
+    }
+
+
+    /* ================================================
+       CONNECTION REQUEST
+    ================================================ */
+
+    if (
+        message.type ===
+        "CONNECTION_REQUEST"
+    ) {
+
+        console.log(
+            "🔔 Incoming connection request",
+            message.from
+        );
+
+
+        currentConnectionUser =
+            message.from;
+
+
+        connectionUserName.textContent =
+            message.from.username;
+
+
+        connectionUserAvatar.textContent =
+            message.from.avatar ||
+            "👤";
+
+
+        connectionModal.classList.remove(
+            "hidden"
+        );
+
+
+        vibrate(
+            [
+                300,
+                150,
+                300
+            ]
+        );
+
+    }
+
+
+    /* ================================================
+       CONNECTION ACCEPTED
+    ================================================ */
+
+    if (
+        message.type ===
+        "CONNECTION_ACCEPT"
+    ) {
+
+        console.log(
+            "✅ Connection accepted"
+        );
+
+
+        const user =
+            message.from;
+
+
+        addPerson(
+            user
+        );
+
+
+        showToast(
+            "✅",
+            `${user.username} accepted your request`
+        );
+
+    }
+
+
+    /* ================================================
+       CONNECTION REJECTED
+    ================================================ */
+
+    if (
+        message.type ===
+        "CONNECTION_REJECT"
+    ) {
+
+        showToast(
+            "❌",
+            "Connection request rejected"
+        );
+
+    }
+
+
+    /* ================================================
+       WEBRTC SIGNAL
+    ================================================ */
+
+    if (
+        message.type ===
+        "WEBRTC_SIGNAL"
+    ) {
+
+        handleWebRTCSignal(
+            message
+        );
+
+    }
+
+}
+
+function sendConnectionRequest(
+    user
+) {
+
+    if (
+        !ovcSocket ||
+        ovcSocket.readyState !==
+        WebSocket.OPEN
+    ) {
+
+        showToast(
+            "❌",
+            "OVC LAN is not connected."
+        );
+
+        return;
+
+    }
+
+
+    ovcSocket.send(
+
+        JSON.stringify({
+
+            type:
+                "CONNECTION_REQUEST",
+
+            targetId:
+                user.id,
+
+            from:
+                {
+
+                    id:
+                        currentUser.id,
+
+                    username:
+                        currentUser.username,
+
+                    avatar:
+                        currentUser.avatar
+
+                }
+
+        })
+
+    );
+
+
+    showToast(
+        "📨",
+        `Request sent to ${user.username}`
+    );
+
+}
+
 
 /* =====================================================
    BEFORE UNLOAD
