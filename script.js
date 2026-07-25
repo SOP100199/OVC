@@ -82,7 +82,7 @@ const scanQrPanel = document.getElementById("scan-qr-panel");
 
 const startScan = document.getElementById("open-scanner");
 
-const openScanner = document.getElementById("open-scanner");
+const openScanner = document.getElementById("start-scan");
 
 const qrScannerPanel = document.getElementById("qr-scanner-panel");
 
@@ -593,65 +593,131 @@ function navigateTo(sectionId) {
 ===================================================== */
 
 function setupQRInterface() {
-  if (myQrTab) {
-    myQrTab.addEventListener("click", function () {
-      myQrTab.classList.add("active");
 
-      if (scanQrTab) {
-        scanQrTab.classList.remove("active");
-      }
+    console.log("📷 Setting up QR interface...");
 
-      if (myQrPanel) {
-        myQrPanel.classList.add("active");
-      }
+    // My QR tab
+    if (myQrTab && scanQrTab && myQrPanel && scanQrPanel) {
 
-      if (scanQrPanel) {
-        scanQrPanel.classList.remove("active");
-      }
-    });
-  }
+        myQrTab.addEventListener("click", function () {
 
-  if (scanQrTab) {
-    scanQrTab.addEventListener("click", function () {
-      scanQrTab.classList.add("active");
+            myQrTab.classList.add("active");
+            scanQrTab.classList.remove("active");
 
-      if (myQrTab) {
-        myQrTab.classList.remove("active");
-      }
+            myQrPanel.classList.add("active");
+            scanQrPanel.classList.remove("active");
 
-      if (scanQrPanel) {
-        scanQrPanel.classList.add("active");
-      }
+        });
 
-      if (myQrPanel) {
-        myQrPanel.classList.remove("active");
-      }
-    });
-  }
 
-  if (startScan) {
-    startScan.addEventListener("click", openQRScanner);
-  }
+        // Scan QR tab
+        scanQrTab.addEventListener("click", function () {
 
-  if (openScanner) {
-    openScanner.addEventListener("click", openQRScanner);
-  }
+            scanQrTab.classList.add("active");
+            myQrTab.classList.remove("active");
 
-  if (closeScanner) {
-    closeScanner.addEventListener("click", closeQRScanner);
-  }
+            scanQrPanel.classList.add("active");
+            myQrPanel.classList.remove("active");
 
-  if (cancelScanner) {
-    cancelScanner.addEventListener("click", closeQRScanner);
-  }
+        });
 
-  if (shareQr) {
-    shareQr.addEventListener("click", shareUserQR);
-  }
+    }
 
-  if (downloadQr) {
-    downloadQr.addEventListener("click", downloadUserQR);
-  }
+
+    // START SCANNER BUTTON
+    if (openScanner) {
+
+        console.log(
+            "✅ Start scanner button found"
+        );
+
+        openScanner.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                console.log(
+                    "📷 START SCANNER BUTTON CLICKED"
+                );
+
+                openQRScanner();
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "❌ #open-scanner button not found"
+        );
+
+    }
+
+
+    // CLOSE SCANNER
+    if (closeScanner) {
+
+        closeScanner.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                console.log(
+                    "❌ Close scanner clicked"
+                );
+
+                closeQRScanner();
+
+            }
+        );
+
+    }
+
+
+    // CANCEL SCANNER
+    if (cancelScanner) {
+
+        cancelScanner.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                console.log(
+                    "❌ Cancel scanner clicked"
+                );
+
+                closeQRScanner();
+
+            }
+        );
+
+    }
+
+
+    // Share QR
+    if (shareQr) {
+
+        shareQr.addEventListener(
+            "click",
+            shareUserQR
+        );
+
+    }
+
+
+    // Download QR
+    if (downloadQr) {
+
+        downloadQr.addEventListener(
+            "click",
+            downloadUserQR
+        );
+
+    }
+
 }
 
 /* =====================================================
@@ -722,265 +788,632 @@ function generateUserQR() {
    QR SCANNER
 ===================================================== */
 
-function openQRScanner() {
-  console.log("📷 Scan QR button clicked");
+async function openQRScanner() {
 
-  if (typeof Html5Qrcode === "undefined") {
-    showToast("⚠️", "QR scanner library not loaded.");
+    console.log("📷 START SCANNER BUTTON CLICKED");
 
-    return;
-  }
+    if (typeof Html5Qrcode === "undefined") {
 
-  const scannerElement = document.getElementById("qr-reader");
+        console.error(
+            "❌ Html5Qrcode library is not loaded"
+        );
 
-  if (!scannerElement) {
-    console.error("#qr-reader not found");
-
-    showToast("❌", "QR scanner element not found.");
-
-    return;
-  }
-
-  if (qrScanner) {
-    return;
-  }
-
-  if (qrScannerPanel) {
-    qrScannerPanel.style.display = "block";
-  }
-
-  qrScanner = new Html5Qrcode("qr-reader");
-
-  qrScanner
-    .start(
-      {
-        facingMode: "environment",
-      },
-
-      {
-        fps: 10,
-
-        qrbox: {
-          width: 250,
-
-          height: 250,
-        },
-      },
-
-      function (decodedText) {
-        console.log("✅ QR detected:", decodedText);
-
-        handleQRScan(decodedText);
-      },
-
-      function () {
-        // QR not detected.
-        // This is normal.
-      },
-    )
-
-    .then(function () {
-      console.log("📷 QR camera started.");
-    })
-
-    .catch(function (error) {
-      console.error("QR camera error:", error);
-
-      showToast("❌", "Could not open camera.");
-
-      qrScanner = null;
-    });
-}
-
-async function handleQRScan(decodedText) {
-  console.log("📦 QR data:", decodedText);
-
-  let userId = null;
-
-  /*
-    New compact format:
-    OVC:user-id
-    */
-
-  if (decodedText.startsWith("OVC:")) {
-    userId = decodedText.substring(4);
-  } else {
-    /*
-        Backward compatibility
-        with old JSON QR codes.
-        */
-
-    try {
-      const oldData = JSON.parse(decodedText);
-
-      if (oldData && oldData.type === "OVC_USER") {
-        userId = oldData.id;
-      }
-    } catch (error) {
-      console.error("Invalid QR:", error);
-    }
-  }
-
-  if (!userId) {
-    showToast("❌", "Invalid OVC QR code.");
-
-    return;
-  }
-
-  if (currentUser && userId === currentUser.id) {
-    showToast("😅", "That's your own QR code!");
-
-    return;
-  }
-
-  console.log("🔎 Looking up OVC user:", userId);
-
-  /*
-    Ask signaling server
-    for the user profile.
-
-    This requires the server to
-    implement "find-user".
-    */
-
-  if (!socket || !socket.connected) {
-    showToast("⚠️", "Not connected to OVC network.");
-
-    return;
-  }
-
-  socket.emit(
-    "find-user",
-
-    {
-      userId: userId,
-    },
-
-    async function (userData) {
-      if (!userData) {
-        showToast("❌", "User is not currently online.");
+        showToast(
+            "❌",
+            "QR scanner library is not loaded."
+        );
 
         return;
-      }
+    }
 
-      await closeQRScanner();
+    const reader =
+        document.getElementById("qr-reader");
 
-      addPerson(userData);
+    if (!reader) {
 
-      sendConnectionRequest(userData);
-    },
-  );
+        console.error(
+            "❌ #qr-reader not found"
+        );
+
+        showToast(
+            "❌",
+            "QR reader element not found."
+        );
+
+        return;
+    }
+
+    if (qrScanner) {
+
+        console.log(
+            "⚠️ Scanner already running."
+        );
+
+        return;
+    }
+
+    try {
+
+        // Clear previous scanner contents
+        reader.innerHTML = "";
+
+        if (qrScannerPanel) {
+            qrScannerPanel.style.display = "block";
+        }
+
+        qrScanner =
+            new Html5Qrcode(
+                "qr-reader"
+            );
+
+        console.log(
+            "📷 Requesting camera..."
+        );
+
+        await qrScanner.start(
+
+            {
+                facingMode: "environment"
+            },
+
+            {
+                fps: 10,
+
+                qrbox: {
+                    width: 250,
+                    height: 250
+                },
+
+                aspectRatio: 1.0
+            },
+
+            async function(decodedText) {
+
+                console.log(
+                    "✅ QR DETECTED:",
+                    decodedText
+                );
+
+                await handleQRScan(
+                    decodedText
+                );
+
+            },
+
+            function(errorMessage) {
+
+                // QR not detected.
+                // This is normal.
+
+            }
+
+        );
+
+        console.log(
+            "✅ QR CAMERA STARTED"
+        );
+
+        showToast(
+            "📷",
+            "Scanner started."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ QR CAMERA ERROR:",
+            error
+        );
+
+        qrScanner = null;
+
+        if (error.name === "NotAllowedError") {
+
+            showToast(
+                "🚫",
+                "Camera permission was denied."
+            );
+
+        }
+
+        else if (
+            error.name === "NotFoundError"
+        ) {
+
+            showToast(
+                "❌",
+                "No camera found."
+            );
+
+        }
+
+        else {
+
+            showToast(
+                "❌",
+                "Could not start QR scanner."
+            );
+
+        }
+
+    }
+
 }
+
+
+/* =====================================================
+   HANDLE QR SCAN
+===================================================== */
+
+async function handleQRScan(
+    decodedText
+) {
+
+    console.log(
+        "📦 QR DATA:",
+        decodedText
+    );
+
+    let userId = null;
+
+
+    /*
+        NEW FORMAT
+
+        OVC:ovc-12345
+    */
+
+    if (
+        decodedText.startsWith(
+            "OVC:"
+        )
+    ) {
+
+        userId =
+            decodedText.substring(
+                4
+            );
+
+    }
+
+    /*
+        OLD JSON FORMAT
+    */
+
+    else {
+
+        try {
+
+            const oldData =
+                JSON.parse(
+                    decodedText
+                );
+
+            if (
+                oldData &&
+                oldData.type ===
+                    "OVC_USER"
+            ) {
+
+                userId =
+                    oldData.id;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Invalid QR data:",
+                error
+            );
+
+        }
+
+    }
+
+
+    if (!userId) {
+
+        showToast(
+            "❌",
+            "Invalid OVC QR code."
+        );
+
+        return;
+
+    }
+
+
+    /*
+        PREVENT SELF SCAN
+    */
+
+    if (
+        currentUser &&
+        userId ===
+            currentUser.id
+    ) {
+
+        showToast(
+            "😅",
+            "That's your own QR code!"
+        );
+
+        return;
+
+    }
+
+
+    /*
+        CHECK SOCKET
+    */
+
+    if (
+        !socket ||
+        !socket.connected
+    ) {
+
+        showToast(
+            "⚠️",
+            "Not connected to OVC server."
+        );
+
+        console.error(
+            "Socket is not connected."
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "🔎 Searching user:",
+        userId
+    );
+
+
+    /*
+        FIND USER ON SERVER
+    */
+
+    socket.emit(
+
+        "find-user",
+
+        {
+            userId:
+                userId
+        },
+
+        async function(
+            userData
+        ) {
+
+            console.log(
+                "👤 User lookup result:",
+                userData
+            );
+
+
+            if (!userData) {
+
+                showToast(
+                    "❌",
+                    "User is offline."
+                );
+
+                return;
+
+            }
+
+
+            /*
+                STOP SCANNER
+            */
+
+            await closeQRScanner();
+
+
+            /*
+                ADD TO LOCAL PEOPLE
+            */
+
+            addPerson(
+                userData
+            );
+
+
+            /*
+                SEND CONNECTION REQUEST
+            */
+
+            sendConnectionRequest(
+                userData
+            );
+
+        }
+
+    );
+
+}
+
 
 /* =====================================================
    STOP QR SCANNER
 ===================================================== */
 
 async function stopQRScanner() {
-  if (!qrScanner) {
-    return;
-  }
 
-  try {
-    await qrScanner.stop();
+    if (!qrScanner) {
+        return;
+    }
 
-    qrScanner.clear();
-  } catch (error) {
-    console.error("QR stop error:", error);
-  }
+    console.log(
+        "🛑 Stopping QR scanner..."
+    );
 
-  qrScanner = null;
+    try {
+
+        await qrScanner.stop();
+
+        await qrScanner.clear();
+
+        console.log(
+            "✅ QR scanner stopped."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "QR scanner stop error:",
+            error
+        );
+
+    }
+
+    finally {
+
+        qrScanner = null;
+
+    }
+
 }
+
+
+/* =====================================================
+   CLOSE QR SCANNER
+===================================================== */
 
 async function closeQRScanner() {
-  await stopQRScanner();
 
-  if (qrScannerPanel) {
-    qrScannerPanel.style.display = "none";
-  }
+    await stopQRScanner();
+
+    if (qrScannerPanel) {
+
+        qrScannerPanel.style.display =
+            "none";
+
+    }
+
 }
 
+
 /* =====================================================
-   QR SHARE
+   QR BUTTON INITIALIZATION
 ===================================================== */
 
-async function shareUserQR() {
-  if (!currentUser) {
-    return;
-  }
+function setupQRInterface() {
 
-  const canvas = qrCode?.querySelector("canvas");
-
-  if (!canvas) {
-    showToast("⚠️", "QR code is not ready.");
-
-    return;
-  }
-
-  try {
-    const blob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/png"),
+    console.log(
+        "📷 Initializing QR interface..."
     );
 
-    const file = new File(
-      [blob],
 
-      `${currentUser.username}-OVC-QR.png`,
-
-      {
-        type: "image/png",
-      },
-    );
+    /*
+        TABS
+    */
 
     if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({
-        files: [file],
-      })
+        myQrTab &&
+        scanQrTab &&
+        myQrPanel &&
+        scanQrPanel
     ) {
-      await navigator.share({
-        title: "Connect with me on OVC",
 
-        text: `Scan my OVC QR code to connect with ${currentUser.username}.`,
+        myQrTab.addEventListener(
+            "click",
+            function() {
 
-        files: [file],
-      });
-    } else {
-      showToast("ℹ️", "Sharing is not supported.");
+                myQrTab.classList.add(
+                    "active"
+                );
+
+                scanQrTab.classList.remove(
+                    "active"
+                );
+
+                myQrPanel.classList.add(
+                    "active"
+                );
+
+                scanQrPanel.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+        scanQrTab.addEventListener(
+            "click",
+            function() {
+
+                scanQrTab.classList.add(
+                    "active"
+                );
+
+                myQrTab.classList.remove(
+                    "active"
+                );
+
+                scanQrPanel.classList.add(
+                    "active"
+                );
+
+                myQrPanel.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
     }
-  } catch (error) {
-    if (error.name !== "AbortError") {
-      console.error(error);
+
+
+    /*
+        IMPORTANT:
+        Your HTML button ID is:
+
+        id="start-scan"
+
+        NOT:
+
+        id="open-scanner"
+    */
+
+    const startScannerButton =
+        document.getElementById(
+            "start-scan"
+        );
+
+
+    if (
+        startScannerButton
+    ) {
+
+        console.log(
+            "✅ Start scanner button found."
+        );
+
+
+        startScannerButton.addEventListener(
+            "click",
+
+            async function(event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                console.log(
+                    "📷 START SCANNER CLICKED"
+                );
+
+                await openQRScanner();
+
+            }
+
+        );
+
     }
-  }
+
+    else {
+
+        console.error(
+            "❌ #start-scan button NOT FOUND"
+        );
+
+    }
+
+
+    /*
+        CLOSE SCANNER
+    */
+
+    if (
+        closeScanner
+    ) {
+
+        closeScanner.addEventListener(
+            "click",
+
+            async function(event) {
+
+                event.preventDefault();
+
+                await closeQRScanner();
+
+            }
+
+        );
+
+    }
+
+
+    /*
+        CANCEL SCANNER
+    */
+
+    if (
+        cancelScanner
+    ) {
+
+        cancelScanner.addEventListener(
+            "click",
+
+            async function(event) {
+
+                event.preventDefault();
+
+                await closeQRScanner();
+
+            }
+
+        );
+
+    }
+
+
+    /*
+        SHARE QR
+    */
+
+    if (
+        shareQr
+    ) {
+
+        shareQr.addEventListener(
+            "click",
+            shareUserQR
+        );
+
+    }
+
+
+    /*
+        DOWNLOAD QR
+    */
+
+    if (
+        downloadQr
+    ) {
+
+        downloadQr.addEventListener(
+            "click",
+            downloadUserQR
+        );
+
+    }
+
 }
 
-/* =====================================================
-   QR DOWNLOAD
-===================================================== */
-
-function downloadUserQR() {
-  if (!currentUser) {
-    return;
-  }
-
-  const canvas = qrCode?.querySelector("canvas");
-
-  if (!canvas) {
-    showToast("⚠️", "QR code is not ready.");
-
-    return;
-  }
-
-  const link = document.createElement("a");
-
-  link.download = `${currentUser.username}-OVC-QR.png`;
-
-  link.href = canvas.toDataURL("image/png");
-
-  link.click();
-}
 
 /* =====================================================
    PEOPLE SYSTEM

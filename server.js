@@ -1,122 +1,61 @@
 const express = require("express");
 const http = require("http");
-const path = require("path");
 const { Server } = require("socket.io");
+const path = require("path");
 
 const app = express();
 
-// Create HTTP server
 const server = http.createServer(app);
-
-// Port
-const PORT = process.env.PORT || 3000;
-
-// =====================================================
-// SOCKET.IO
-// =====================================================
 
 const io = new Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"]
-    },
-
-    transports: ["websocket", "polling"]
+    }
 });
 
-
-// =====================================================
-// MIDDLEWARE
-// =====================================================
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
 
-
-// =====================================================
-// SERVE FRONTEND
-// =====================================================
-
 app.use(express.static(__dirname));
 
-
-// =====================================================
-// MAIN PAGE
-// =====================================================
-
 app.get("/", (req, res) => {
-
     res.sendFile(
         path.join(__dirname, "index.html")
     );
-
 });
-
-
-// =====================================================
-// HEALTH CHECK
-// =====================================================
 
 app.get("/health", (req, res) => {
-
-    res.status(200).json({
-
+    res.json({
         status: "OK",
-
-        app: "OVC Signaling Server",
-
-        socketIO: true,
-
+        app: "OVC",
         message: "OVC signaling server is running"
-
     });
-
 });
 
-
-// =====================================================
-// CONNECTED USERS
-// =====================================================
-
-const connectedUsers = new Map();
-
-
-// =====================================================
-// SOCKET CONNECTION
-// =====================================================
+const users = new Map();
 
 io.on("connection", (socket) => {
 
     console.log(
-        "🟢 Socket connected:",
+        "Socket connected:",
         socket.id
     );
-
-
-    // =================================================
-    // REGISTER USER
-    // =================================================
 
     socket.on("register-user", (user) => {
 
         if (
             !user ||
-            !user.id ||
-            !user.username
+            !user.id
         ) {
-
-            console.log(
-                "❌ Invalid user registration"
-            );
-
             return;
-
         }
 
-
-        connectedUsers.set(
+        users.set(
             user.id,
             {
                 ...user,
@@ -124,66 +63,57 @@ io.on("connection", (socket) => {
             }
         );
 
-
         socket.userId =
             user.id;
 
-
         console.log(
-            `👤 User registered: ${user.username} (${user.id})`
-        );
-
-
-        // Send current online users
-        socket.emit(
-            "online-users",
-            Array.from(
-                connectedUsers.values()
-            )
-        );
-
-
-        // Notify everyone else
-        socket.broadcast.emit(
-            "user-online",
-            user
+            "User registered:",
+            user.username,
+            user.id
         );
 
     });
 
+    socket.on(
+        "find-user",
+        (
+            userId,
+            callback
+        ) => {
 
-    // =================================================
-    // CONNECTION REQUEST
-    // =================================================
+            const user =
+                users.get(userId);
+
+            if (
+                typeof callback ===
+                "function"
+            ) {
+
+                callback(
+                    user || null
+                );
+
+            }
+
+        }
+    );
 
     socket.on(
         "connection-request",
         (data) => {
 
-            if (
-                !data ||
-                !data.from ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
-                    data.to.id
+            const target =
+                users.get(
+                    data.to
                 );
 
-
-            if (!targetUser) {
+            if (!target) {
 
                 socket.emit(
                     "user-offline",
                     {
                         userId:
-                            data.to.id
+                            data.to
                     }
                 );
 
@@ -191,9 +121,8 @@ io.on("connection", (socket) => {
 
             }
 
-
             io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
                 "connection-request",
                 {
@@ -202,49 +131,24 @@ io.on("connection", (socket) => {
                 }
             );
 
-
-            console.log(
-                `📨 Connection request: ${data.from.username} → ${data.to.username}`
-            );
-
         }
     );
-
-
-    // =================================================
-    // CONNECTION RESPONSE
-    // =================================================
 
     socket.on(
         "connection-response",
         (data) => {
 
-            if (
-                !data ||
-                !data.to ||
-                !data.accepted
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
-                    data.to.id
+            const target =
+                users.get(
+                    data.to
                 );
 
-
-            if (!targetUser) {
-
+            if (!target) {
                 return;
-
             }
 
-
             io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
                 "connection-response",
                 {
@@ -259,410 +163,121 @@ io.on("connection", (socket) => {
         }
     );
 
-
-    // =================================================
-    // WEBRTC OFFER
-    // =================================================
-
     socket.on(
         "webrtc-offer",
         (data) => {
 
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
+            const target =
+                users.get(
                     data.to
                 );
 
-
-            if (!targetUser) {
-
-                console.log(
-                    "❌ Target user for offer not found"
-                );
-
+            if (!target) {
                 return;
-
             }
 
-
             io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
                 "webrtc-offer",
-                {
-                    from:
-                        data.from,
-
-                    offer:
-                        data.offer
-                }
-            );
-
-
-            console.log(
-                "📡 WebRTC offer forwarded"
+                data
             );
 
         }
     );
-
-
-    // =================================================
-    // WEBRTC ANSWER
-    // =================================================
 
     socket.on(
         "webrtc-answer",
         (data) => {
 
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
+            const target =
+                users.get(
                     data.to
                 );
 
-
-            if (!targetUser) {
-
+            if (!target) {
                 return;
-
             }
 
-
             io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
                 "webrtc-answer",
-                {
-                    from:
-                        data.from,
-
-                    answer:
-                        data.answer
-                }
-            );
-
-
-            console.log(
-                "📡 WebRTC answer forwarded"
+                data
             );
 
         }
     );
 
-
-    // =================================================
-    // ICE CANDIDATE
-    // =================================================
-
     socket.on(
-        "webrtc-ice-candidate",
+        "ice-candidate",
         (data) => {
 
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
+            const target =
+                users.get(
                     data.to
                 );
 
-
-            if (!targetUser) {
-
+            if (!target) {
                 return;
-
             }
 
-
             io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
-                "webrtc-ice-candidate",
-                {
-                    from:
-                        data.from,
-
-                    candidate:
-                        data.candidate
-                }
+                "ice-candidate",
+                data
             );
 
         }
     );
 
-
-    // =================================================
-    // CALL REQUEST
-    // =================================================
-
     socket.on(
-        "call-request",
+        "call-ended",
         (data) => {
 
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
+            const target =
+                users.get(
                     data.to
                 );
 
-
-            if (!targetUser) {
-
-                socket.emit(
-                    "user-offline",
-                    {
-                        userId:
-                            data.to
-                    }
-                );
-
+            if (!target) {
                 return;
-
             }
-
 
             io.to(
-                targetUser.socketId
-            ).emit(
-                "incoming-call",
-                {
-                    from:
-                        data.from
-                }
-            );
-
-
-            console.log(
-                "📞 Incoming call forwarded"
-            );
-
-        }
-    );
-
-
-    // =================================================
-    // CALL ACCEPTED
-    // =================================================
-
-    socket.on(
-        "call-accepted",
-        (data) => {
-
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
-                    data.to
-                );
-
-
-            if (!targetUser) {
-
-                return;
-
-            }
-
-
-            io.to(
-                targetUser.socketId
-            ).emit(
-                "call-accepted",
-                {
-                    from:
-                        data.from
-                }
-            );
-
-        }
-    );
-
-
-    // =================================================
-    // CALL REJECTED
-    // =================================================
-
-    socket.on(
-        "call-rejected",
-        (data) => {
-
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
-                    data.to
-                );
-
-
-            if (!targetUser) {
-
-                return;
-
-            }
-
-
-            io.to(
-                targetUser.socketId
-            ).emit(
-                "call-rejected",
-                {
-                    from:
-                        data.from
-                }
-            );
-
-        }
-    );
-
-
-    // =================================================
-    // END CALL
-    // =================================================
-
-    socket.on(
-        "end-call",
-        (data) => {
-
-            if (
-                !data ||
-                !data.to
-            ) {
-
-                return;
-
-            }
-
-
-            const targetUser =
-                connectedUsers.get(
-                    data.to
-                );
-
-
-            if (!targetUser) {
-
-                return;
-
-            }
-
-
-            io.to(
-                targetUser.socketId
+                target.socketId
             ).emit(
                 "call-ended",
-                {
-                    from:
-                        data.from
-                }
+                data
             );
 
         }
     );
-
-
-    // =================================================
-    // DISCONNECT
-    // =================================================
 
     socket.on(
         "disconnect",
         () => {
 
-            console.log(
-                "🔴 Socket disconnected:",
-                socket.id
-            );
-
-
             if (
                 socket.userId
             ) {
 
-                const user =
-                    connectedUsers.get(
-                        socket.userId
-                    );
-
-
-                connectedUsers.delete(
+                users.delete(
                     socket.userId
                 );
 
-
-                if (user) {
-
-                    io.emit(
-                        "user-offline",
-                        {
-                            userId:
-                                user.id
-                        }
-                    );
-
-                }
-
             }
+
+            console.log(
+                "Socket disconnected:",
+                socket.id
+            );
 
         }
     );
 
 });
-
-
-// =====================================================
-// START SERVER
-// =====================================================
 
 server.listen(
     PORT,
@@ -670,11 +285,7 @@ server.listen(
     () => {
 
         console.log(
-            `🚀 OVC signaling server running on port ${PORT}`
-        );
-
-        console.log(
-            `📡 Socket.IO signaling enabled`
+            `OVC signaling server running on port ${PORT}`
         );
 
     }
